@@ -1,23 +1,13 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { createAppContainer } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
+import MainScreen from './Components/MainScreen';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Hello!!</Text>
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'green',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  text: {
-    color: "white",
-    fontSize: 30
+const AppStackNavigator = createStackNavigator({
+  Main:{
+    screen: MainScreen // MainScreen 컴포넌트를 네비게이터에 등록
   }
 });
+
+export default createAppContainer(AppStackNavigator);
