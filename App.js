@@ -1,12 +1,13 @@
-import React, { Component } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { createAppContainer } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
-import MainScreen from './Components/MainScreen';
+import React, { Component } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { createAppContainer } from "react-navigation";
+import { createStackNavigator } from "react-navigation-stack";
+import MainScreen from "./Components/MainScreen";
+
 
 const AppStackNavigator = createStackNavigator({
-  Main:{
-    screen: MainScreen 
+  Main: {
+    screen: MainScreen
   }
 });
 
