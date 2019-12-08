@@ -1,15 +1,17 @@
 import React, { Component } from "react";
-import { StyleSheet, TextInput, View, Platform, Button } from "react-native";
+import { StyleSheet, Text, View, Platform } from "react-native";
 import { createMaterialTopTabNavigator } from "react-navigation-tabs";
 import { createAppContainer } from "react-navigation";
 import { Notifications } from "expo";
 import * as Permissions from "expo-permissions";
-import HomeTab from "./TabNavigator/HomeTab";
-import OrderListTab from "./TabNavigator/OrderListTab";
-import ProfileTab from "./TabNavigator/ProfileTab";
-import axios from "axios";
+import { HomeTab, OrderListTab, ProfileTab } from "../TabNavigator";
 
 const AppTabNavigator = createMaterialTopTabNavigator(
+  {
+    HomeTab: { screen: HomeTab },
+    OrderListTab: { screen: OrderListTab },
+    ProfileTab: { screen: ProfileTab }
+  },
   {
     HomeTab: { screen: HomeTab },
     OrderListTab: { screen: OrderListTab },
