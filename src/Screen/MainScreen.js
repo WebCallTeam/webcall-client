@@ -13,11 +13,6 @@ const AppTabNavigator = createMaterialTopTabNavigator(
     ProfileTab: { screen: ProfileTab }
   },
   {
-    HomeTab: { screen: HomeTab },
-    OrderListTab: { screen: OrderListTab },
-    ProfileTab: { screen: ProfileTab }
-  },
-  {
     animationEnabled: true,
     swipeEnabled: true,
     tabBarPosition: "bottom",
