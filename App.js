@@ -1,25 +1,26 @@
 import React, { Component } from "react";
-
-import { createAppContainer } from "react-navigation";
+import { StyleSheet, Text, View } from "react-native";
+import { createSwitchNavigator, createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
-import MainScreen from "./src/Components/MainScreen";
-import { Provider } from "mobx-react";
-import Store from "./src/store/Store";
 
-export default class App extends Component {
-  render() {
-    const AppStackNavigator = createStackNavigator({
-      Main: {
-        screen: MainScreen
-      }
-    });
+import LoginCheck from "./src/Components/LoginCheck";
+import { LoginScreen, MainScreen, SignInScreen } from "./src/Screen";
 
-    const AppContainer = createAppContainer(AppStackNavigator);
+const AppStack = createStackNavigator({ Main: MainScreen });
+const AuthStack = createStackNavigator({
+  Login: LoginScreen,
+  SignIn: SignInScreen
+});
 
-    return (
-      <Provider Store={Store}>
-        <AppContainer />
-      </Provider>
-    );
-  }
-}
+export default createAppContainer(
+  createSwitchNavigator(
+    {
+      Loading: LoginCheck,
+      App: AppStack,
+      Auth: AuthStack
+    },
+    {
+      initialRouteName: "Loading"
+    }
+  )
+);
