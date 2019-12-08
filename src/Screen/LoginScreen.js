@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Link } from 'react-native';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import { Icon } from 'native-base';
 
@@ -22,15 +22,17 @@ export default class LoginScreen extends Component {
                     <TextInput 
                         style={styles.textForm} 
                         placeholder={"Password"}/>
+                    <TouchableOpacity style={styles.textLink}
+                        onPress ={()=> this.props.navigation.navigate('SignIn')}>
+                        <Text style={{color:'gray'}}>회원가입</Text>
+                    </TouchableOpacity>
                 </View>
-            <View style={styles.buttonArea}>
-                <TouchableOpacity 
-                    style={styles.button}
-                    onPress>
-                    <Text style={styles.buttonTitle}>Login</Text>
-                </TouchableOpacity>
+                <View style={styles.buttonArea}>
+                    <TouchableOpacity style={styles.button}>
+                        <Text style={styles.buttonTitle}>Login</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
-        </View>
         );
     }
 }
@@ -53,7 +55,7 @@ const styles = StyleSheet.create({
     },
     formArea: {
         width: '100%',
-        paddingBottom: wp('10%'),
+        paddingBottom: wp('5%'),
     },
     textForm: {
         borderWidth: 0.5,
@@ -63,6 +65,11 @@ const styles = StyleSheet.create({
         paddingLeft: 5,
         paddingRight: 5,
         marginBottom: 5,
+    },
+    textLink: {
+        marginTop: 5,
+        justifyContent: 'center',
+        alignItems: 'flex-end',
     },
     buttonArea: {
         width: '100%',

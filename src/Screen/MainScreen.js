@@ -3,9 +3,7 @@ import { StyleSheet, Text, View, Platform } from 'react-native';
 import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
 import { createAppContainer } from 'react-navigation';
 
-import HomeTab from './TabNavigator/HomeTab'
-import OrderListTab from './TabNavigator/OrderListTab'
-import ProfileTab from './TabNavigator/ProfileTab'
+import { HomeTab, OrderListTab, ProfileTab } from '../TabNavigator'
 
 const AppTabNavigator = createMaterialTopTabNavigator({
   HomeTab: { screen: HomeTab },

@@ -1,9 +1,8 @@
 import React from 'react';
-import { AsyncStorage } from 'react-native';
+import { ActivityIndicator, AsyncStorage, StatusBar, StyleSheet, View, Text } from 'react-native';
 
 class LoginCheck extends React.Component {
-  constructor(props) {
-    super(props);
+  componentDidMount() {
     this._bootstrapAsync();
   }
 
@@ -17,8 +16,9 @@ class LoginCheck extends React.Component {
       <View>
         <ActivityIndicator />
         <StatusBar barStyle="default" />
-        <Text>SignInScreen</Text>
       </View>
     );
   }
 }
+
+export default LoginCheck;
