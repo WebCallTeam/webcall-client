@@ -28,7 +28,8 @@ export default class LoginScreen extends Component {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.buttonArea}>
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity style={styles.button}
+                        onPress = {()=> this.props.navigation.navigate('App')}>
                         <Text style={styles.buttonTitle}>Login</Text>
                     </TouchableOpacity>
                 </View>
