@@ -1,89 +1,179 @@
-import React, { Component } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Link } from 'react-native';
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import { Icon } from 'native-base';
+import React, { Component } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Link
+} from "react-native";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp
+} from "react-native-responsive-screen";
+import { Icon } from "native-base";
+import { Notifications } from "expo";
+import * as Permissions from "expo-permissions";
+import { inject, observer } from "mobx-react";
+import { observable } from "mobx";
 
-export default class LoginScreen extends Component {
+const PUSH_ENDPOINT = "https://webcall-dbserver.herokuapp.com/callcustomer/";
 
-    static navigationOptions = {
-        header: null,
-    };
+class LoginScreen extends Component {
+  static navigationOptions = {
+    header: null
+  };
 
-    render() {
-        return (
-            <View style={styles.container}>
-                <View style={styles.titleArea}>
-                    <Text style={styles.title}>WEBCALL</Text>
-                </View>
-                <View style={styles.formArea}>
-                    <TextInput 
-                        style={styles.textForm} 
-                        placeholder={"ID"}/>
-                    <TextInput 
-                        style={styles.textForm} 
-                        placeholder={"Password"}/>
-                    <TouchableOpacity style={styles.textLink}
-                        onPress ={()=> this.props.navigation.navigate('SignIn')}>
-                        <Text style={{color:'gray'}}>회원가입</Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.buttonArea}>
-                    <TouchableOpacity style={styles.button}
-                        onPress = {()=> this.props.navigation.navigate('App')}>
-                        <Text style={styles.buttonTitle}>Login</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        );
+  constructor(props) {
+    super(props);
+
+    this.nameChange = this.nameChange.bind(this);
+    this.passwordChange = this.passwordChange.bind(this);
+    this.testTextChange = this.testTextChange.bind(this);
+  }
+
+  registerForPushNotificationsAsync = async () => {
+    const { status: existingStatus } = await Permissions.getAsync(
+      Permissions.NOTIFICATIONS
+    );
+    let finalStatus = existingStatus;
+
+    // only ask if permissions have not already been determined, because
+    // iOS won't necessarily prompt the user a second time.
+    if (existingStatus !== "granted") {
+      // Android remote notification permissions are granted during the app
+      // install, so this will only ask on iOS
+      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+      finalStatus = status;
     }
+
+    // Stop here if the user did not grant permissions
+    if (finalStatus !== "granted") {
+      return;
+    }
+
+    // Get the token that uniquely identifies this device
+    let token = await Notifications.getExpoPushTokenAsync();
+
+    // POST the token to your backend server from where you can retrieve it to send push notifications.
+    return fetch(PUSH_ENDPOINT, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name: this.state.name,
+        password: this.state.password,
+        expo_token: token
+      })
+    });
+  };
+
+  nameChange(event) {
+    const { userInfo } = this.props;
+
+    userInfo.setName(event.target.value);
+  }
+
+  passwordChange(event) {
+    const { userInfo } = this.props;
+
+    userInfo.setPassword(event.target.value);
+  }
+
+  testTextChange() {
+    const { userInfo } = this.props;
+
+    userInfo.setText("asdf");
+  }
+
+  render() {
+    const { userInfo } = this.props;
+
+    return (
+      <View style={styles.container}>
+        <View style={styles.titleArea}>
+          <Text style={styles.title}>WEBCALL</Text>
+        </View>
+        <View style={styles.formArea}>
+          <TextInput
+            style={styles.textForm}
+            placeholder={"ID"}
+            onChange={this.nameChange}
+            value={userInfo.name}
+          />
+          <TextInput
+            style={styles.textForm}
+            placeholder={"Password"}
+            onChange={this.passwordChange}
+            value={userInfo.password}
+          />
+          <TouchableOpacity
+            style={styles.textLink}
+            onPress={() => this.props.navigation.navigate("SignIn")}
+          >
+            <Text style={{ color: "gray" }}>{userInfo.testText}</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.buttonArea}>
+          <TouchableOpacity style={styles.button} onPress={this.testTextChange}>
+            <Text style={styles.buttonTitle}>Login</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: 'white',
-        paddingLeft: wp('10%'),
-        paddingRight: wp('10%'),
-        justifyContent: 'center',
-    },
-    titleArea: {
-        width: '100%',
-        padding: wp('10%'),
-        alignItems: 'center',
-    },
-    title: {
-        fontSize: wp('10%'),
-    },
-    formArea: {
-        width: '100%',
-        paddingBottom: wp('5%'),
-    },
-    textForm: {
-        borderWidth: 0.5,
-        borderColor: '#888',
-        width: '100%',
-        height: hp('5%'),
-        paddingLeft: 5,
-        paddingRight: 5,
-        marginBottom: 5,
-    },
-    textLink: {
-        marginTop: 5,
-        justifyContent: 'center',
-        alignItems: 'flex-end',
-    },
-    buttonArea: {
-        width: '100%',
-        height: hp('5%'),
-    },
-    button: {
-        backgroundColor: "#46c3ad",
-        width: "100%",
-        height: "100%",
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    buttonTitle: {
-        color: 'white',
-    },
+  container: {
+    flex: 1,
+    backgroundColor: "white",
+    paddingLeft: wp("10%"),
+    paddingRight: wp("10%"),
+    justifyContent: "center"
+  },
+  titleArea: {
+    width: "100%",
+    padding: wp("10%"),
+    alignItems: "center"
+  },
+  title: {
+    fontSize: wp("10%")
+  },
+  formArea: {
+    width: "100%",
+    paddingBottom: wp("5%")
+  },
+  textForm: {
+    borderWidth: 0.5,
+    borderColor: "#888",
+    width: "100%",
+    height: hp("5%"),
+    paddingLeft: 5,
+    paddingRight: 5,
+    marginBottom: 5
+  },
+  textLink: {
+    marginTop: 5,
+    justifyContent: "center",
+    alignItems: "flex-end"
+  },
+  buttonArea: {
+    width: "100%",
+    height: hp("5%")
+  },
+  button: {
+    backgroundColor: "#46c3ad",
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  buttonTitle: {
+    color: "white"
+  }
 });
+
+export default inject("userInfo")(observer(LoginScreen));

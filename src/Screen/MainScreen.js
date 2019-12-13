@@ -38,9 +38,8 @@ const AppTabNavigator = createMaterialTopTabNavigator(
   }
 );
 
-const PUSH_ENDPOINT = "https://webcall-dbserver.herokuapp.com/callcustomer/";
-
 const AppTabContainet = createAppContainer(AppTabNavigator);
+const PUSH_ENDPOINT = "https://webcall-dbserver.herokuapp.com/callcustomer/";
 
 export default class MainScreen extends Component {
   static navigationOptions = {
