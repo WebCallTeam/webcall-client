@@ -27,35 +27,13 @@ class LoginScreen extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      name: "",
-      password: ""
-    };
+    this.nameChange = this.nameChange.bind(this);
+    this.passwordChange = this.passwordChange.bind(this);
   }
 
   static navigationOptions = {
     title: "WEBCALL",
     headerTitleStyle: { alignSelf: "center", textAlign: "center", flex: 1 }
-  };
-
-  registerForPushNotificationsAsync = async () => {
-    const { status: existingStatus } = await Permissions.getAsync(
-      Permissions.NOTIFICATIONS,
-      Permissions.CAMERA
-    );
-    let finalStatus = existingStatus;
-
-    // only ask if permissions have not already been determined, because
-    // iOS won't necessarily prompt the user a second time.
-    if (existingStatus !== "granted") {
-      // Android remote notification permissions are granted during the app
-      // install, so this will only ask on iOS
-      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-      finalStatus = status;
-    }
-
-    this.nameChange = this.nameChange.bind(this);
-    this.passwordChange = this.passwordChange.bind(this);
   };
 
   registerForPushNotificationsAsync = async () => {
