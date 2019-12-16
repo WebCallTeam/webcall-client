@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import { Text, View, StyleSheet, Button } from "react-native";
 import { Icon } from "native-base";
+
 import { BarCodeScanner } from "expo-barcode-scanner";
+import * as Permissions from "expo-permissions";
 
 export default class HomeTab extends Component {
   static navigationOptions = {
@@ -11,12 +13,28 @@ export default class HomeTab extends Component {
   };
 
   state = {
+    hasCameraPermission: null,
     scanned: false
   };
 
-  render() {
-    const { scanned } = this.state;
+  async componentDidMount() {
+    this.getPermissionsAsync();
+  }
 
+  getPermissionsAsync = async () => {
+    const { status } = await Permissions.askAsync(Permissions.CAMERA);
+    this.setState({ hasCameraPermission: status === "granted" });
+  };
+
+  render() {
+    const { hasCameraPermission, scanned } = this.state;
+
+    if (hasCameraPermission === null) {
+      return <Text>Requesting for camera permission</Text>;
+    }
+    if (hasCameraPermission === false) {
+      return <Text>No access to camera</Text>;
+    }
     return (
       <View
         style={{

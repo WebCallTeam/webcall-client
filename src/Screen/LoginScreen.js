@@ -5,7 +5,10 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  AsyncStorage
+  AsyncStorage,
+  TouchableWithoutFeedback,
+  Keyboard,
+  KeyboardAvoidingView
 } from "react-native";
 import {
   widthPercentageToDP as wp,
@@ -78,27 +81,30 @@ export default class LoginScreen extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <View style={styles.titleArea}>
-          <Text style={styles.title}>회원가입</Text>
-        </View>
-        <View style={styles.formArea}>
-          <TextInput
-            style={styles.textForm}
-            value={this.state.name}
-            onChangeText={name => this.setState({ name })}
-            placeholder={"Name"}
-          />
-        </View>
-        <View style={styles.buttonArea}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={this.registerForPushNotificationsAsync}
-          >
-            <Text style={styles.buttonTitle}>Login</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView style={styles.container} behavior="padding">
+          <View style={styles.titleArea}>
+            <Text style={styles.title}>회원가입</Text>
+          </View>
+
+          <View style={styles.formArea}>
+            <TextInput
+              style={styles.textForm}
+              value={this.state.name}
+              onChangeText={name => this.setState({ name })}
+              placeholder={"Name"}
+            />
+            <View style={styles.buttonArea}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={this.registerForPushNotificationsAsync}
+              >
+                <Text style={styles.buttonTitle}>Login</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
     );
   }
 }
@@ -109,7 +115,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     paddingLeft: wp("10%"),
     paddingRight: wp("10%"),
-    justifyContent: "center"
+    justifyContent: "space-around"
   },
   titleArea: {
     width: "100%",
@@ -130,12 +136,7 @@ const styles = StyleSheet.create({
     height: hp("5%"),
     paddingLeft: 5,
     paddingRight: 5,
-    marginBottom: 5
-  },
-  textLink: {
-    marginTop: 5,
-    justifyContent: "center",
-    alignItems: "flex-end"
+    marginBottom: "5%"
   },
   buttonArea: {
     width: "100%",
