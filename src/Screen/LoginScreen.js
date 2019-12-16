@@ -58,6 +58,8 @@ class LoginScreen extends Component {
 
     // Get the token that uniquely identifies this device
     let token = await Notifications.getExpoPushTokenAsync();
+    
+    AsyncStorage.setItem("userToken", token);
 
     const { userInfo } = await this.props;
 
@@ -91,7 +93,8 @@ class LoginScreen extends Component {
     const { userInfo } = this.props;
 
     return (
-      <View style={styles.container}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView style={styles.container} behavior="padding">
         <View style={styles.titleArea}>
           <Text style={styles.title}>WEBCALL</Text>
         </View>
@@ -110,7 +113,7 @@ class LoginScreen extends Component {
           />
           <TouchableOpacity
             style={styles.textLink}
-            onPress={() => this.props.navigation.navigate("SignIn")}
+            onPress={() => this.props.navigation.navigate("Loading")}
           >
             <Text style={{ color: "gray" }}>회원가입</Text>
           </TouchableOpacity>
@@ -123,7 +126,8 @@ class LoginScreen extends Component {
             <Text style={styles.buttonTitle}>Login</Text>
           </TouchableOpacity>
         </View>
-      </View>
+</KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
     );
   }
 }
