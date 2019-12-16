@@ -14,7 +14,6 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp
 } from "react-native-responsive-screen";
-import { Icon } from "native-base";
 import { Notifications } from "expo";
 import * as Permissions from "expo-permissions";
 import { inject, observer } from "mobx-react";
