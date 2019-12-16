@@ -61,7 +61,7 @@ class LoginScreen extends Component {
 
     // Get the token that uniquely identifies this device
     let token = await Notifications.getExpoPushTokenAsync();
-    
+
     AsyncStorage.setItem("userToken", token);
 
     const { userInfo } = await this.props;
@@ -98,62 +98,38 @@ class LoginScreen extends Component {
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <KeyboardAvoidingView style={styles.container} behavior="padding">
-<<<<<<< HEAD
           <View style={styles.titleArea}>
-            <Text style={styles.title}>회원가입</Text>
+            <Text style={styles.title}>WEBCALL</Text>
           </View>
-
           <View style={styles.formArea}>
             <TextInput
               style={styles.textForm}
-              value={this.state.name}
-              onChangeText={name => this.setState({ name })}
-              placeholder={"Name"}
+              placeholder={"ID"}
+              onChangeText={this.nameChange}
+              value={userInfo.name}
             />
-            <View style={styles.buttonArea}>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={this.registerForPushNotificationsAsync}
-              >
-                <Text style={styles.buttonTitle}>Login</Text>
-              </TouchableOpacity>
-            </View>
+            <TextInput
+              style={styles.textForm}
+              placeholder={"Password"}
+              onChangeText={this.passwordChange}
+              value={userInfo.password}
+            />
+            <TouchableOpacity
+              style={styles.textLink}
+              onPress={() => this.props.navigation.navigate("Loading")}
+            >
+              <Text style={{ color: "gray" }}>회원가입</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.buttonArea}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={this.registerForPushNotificationsAsync}
+            >
+              <Text style={styles.buttonTitle}>Login</Text>
+            </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
-=======
-        <View style={styles.titleArea}>
-          <Text style={styles.title}>WEBCALL</Text>
-        </View>
-        <View style={styles.formArea}>
-          <TextInput
-            style={styles.textForm}
-            placeholder={"ID"}
-            onChangeText={this.nameChange}
-            value={userInfo.name}
-          />
-          <TextInput
-            style={styles.textForm}
-            placeholder={"Password"}
-            onChangeText={this.passwordChange}
-            value={userInfo.password}
-          />
-          <TouchableOpacity
-            style={styles.textLink}
-            onPress={() => this.props.navigation.navigate("Loading")}
-          >
-            <Text style={{ color: "gray" }}>회원가입</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.buttonArea}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={this.registerForPushNotificationsAsync}
-          >
-            <Text style={styles.buttonTitle}>Login</Text>
-          </TouchableOpacity>
-        </View>
-</KeyboardAvoidingView>
->>>>>>> a2b005eb85673a16f29b7d41136f910c4b5f9f7c
       </TouchableWithoutFeedback>
     );
   }
