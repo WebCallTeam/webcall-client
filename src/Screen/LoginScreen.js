@@ -27,9 +27,13 @@ class LoginScreen extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      name: "",
+      password: ""
+    };
+
     this.nameChange = this.nameChange.bind(this);
     this.passwordChange = this.passwordChange.bind(this);
-    this.testTextChange = this.testTextChange.bind(this);
   }
 
   registerForPushNotificationsAsync = async () => {
@@ -55,7 +59,8 @@ class LoginScreen extends Component {
     // Get the token that uniquely identifies this device
     let token = await Notifications.getExpoPushTokenAsync();
 
-    // POST the token to your backend server from where you can retrieve it to send push notifications.
+    const { userInfo } = await this.props;
+
     return fetch(PUSH_ENDPOINT, {
       method: "POST",
       headers: {
@@ -63,29 +68,23 @@ class LoginScreen extends Component {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        name: this.state.name,
-        password: this.state.password,
+        name: userInfo.name,
+        password: userInfo.password,
         expo_token: token
       })
     });
   };
 
-  nameChange(event) {
+  nameChange(value) {
+    console.log(value);
     const { userInfo } = this.props;
-
-    userInfo.setName(event.target.value);
+    userInfo.setName(value);
   }
 
-  passwordChange(event) {
+  passwordChange(value) {
     const { userInfo } = this.props;
 
-    userInfo.setPassword(event.target.value);
-  }
-
-  testTextChange() {
-    const { userInfo } = this.props;
-
-    userInfo.setText("asdf");
+    userInfo.setPassword(value);
   }
 
   render() {
@@ -100,24 +99,27 @@ class LoginScreen extends Component {
           <TextInput
             style={styles.textForm}
             placeholder={"ID"}
-            onChange={this.nameChange}
+            onChangeText={this.nameChange}
             value={userInfo.name}
           />
           <TextInput
             style={styles.textForm}
             placeholder={"Password"}
-            onChange={this.passwordChange}
+            onChangeText={this.passwordChange}
             value={userInfo.password}
           />
           <TouchableOpacity
             style={styles.textLink}
             onPress={() => this.props.navigation.navigate("SignIn")}
           >
-            <Text style={{ color: "gray" }}>{userInfo.testText}</Text>
+            <Text style={{ color: "gray" }}>회원가입</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.buttonArea}>
-          <TouchableOpacity style={styles.button} onPress={this.testTextChange}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={this.registerForPushNotificationsAsync}
+          >
             <Text style={styles.buttonTitle}>Login</Text>
           </TouchableOpacity>
         </View>
