@@ -1,8 +1,10 @@
 import { action, observable } from "mobx";
 
-export default class Store {
+export default class UserInfo {
   @observable name = "";
   @observable password = "";
+
+  @observable testText = "가입";
 
   @action setName(name) {
     this.name = name;
@@ -10,5 +12,9 @@ export default class Store {
 
   @action setPassword(password) {
     this.password = password;
+  }
+
+  @action setText(Text) {
+    this.testText = Text;
   }
 }

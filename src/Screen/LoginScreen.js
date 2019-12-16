@@ -14,20 +14,24 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp
 } from "react-native-responsive-screen";
-
+import { Icon } from "native-base";
 import { Notifications } from "expo";
 import * as Permissions from "expo-permissions";
-import { Icon } from "native-base";
+import { inject, observer } from "mobx-react";
+import { observable } from "mobx";
 
 const PUSH_ENDPOINT = "https://webcall-dbserver.herokuapp.com/callcustomer/";
 
-export default class LoginScreen extends Component {
+class LoginScreen extends Component {
+  static navigationOptions = {
+    header: null
+  };
+
   constructor(props) {
     super(props);
 
-    this.state = {
-      name: ""
-    };
+    this.nameChange = this.nameChange.bind(this);
+    this.passwordChange = this.passwordChange.bind(this);
   }
 
   static navigationOptions = {
@@ -37,8 +41,7 @@ export default class LoginScreen extends Component {
 
   registerForPushNotificationsAsync = async () => {
     const { status: existingStatus } = await Permissions.getAsync(
-      Permissions.NOTIFICATIONS,
-      Permissions.CAMERA
+      Permissions.NOTIFICATIONS
     );
     let finalStatus = existingStatus;
 
@@ -58,31 +61,44 @@ export default class LoginScreen extends Component {
 
     // Get the token that uniquely identifies this device
     let token = await Notifications.getExpoPushTokenAsync();
-
-    console.log(token);
-    // POST the token to your backend server from where you can retrieve it to send push notifications.
-
+    
     AsyncStorage.setItem("userToken", token);
 
-    fetch(PUSH_ENDPOINT, {
+    const { userInfo } = await this.props;
+
+    return fetch(PUSH_ENDPOINT, {
       method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        name: this.state.name,
+        name: userInfo.name,
+        password: userInfo.password,
         expo_token: token
       })
     });
-
-    return this.props.navigation.navigate("Loading");
   };
 
+  nameChange(value) {
+    console.log(value);
+    const { userInfo } = this.props;
+    userInfo.setName(value);
+  }
+
+  passwordChange(value) {
+    const { userInfo } = this.props;
+
+    userInfo.setPassword(value);
+  }
+
   render() {
+    const { userInfo } = this.props;
+
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <KeyboardAvoidingView style={styles.container} behavior="padding">
+<<<<<<< HEAD
           <View style={styles.titleArea}>
             <Text style={styles.title}>회원가입</Text>
           </View>
@@ -104,6 +120,40 @@ export default class LoginScreen extends Component {
             </View>
           </View>
         </KeyboardAvoidingView>
+=======
+        <View style={styles.titleArea}>
+          <Text style={styles.title}>WEBCALL</Text>
+        </View>
+        <View style={styles.formArea}>
+          <TextInput
+            style={styles.textForm}
+            placeholder={"ID"}
+            onChangeText={this.nameChange}
+            value={userInfo.name}
+          />
+          <TextInput
+            style={styles.textForm}
+            placeholder={"Password"}
+            onChangeText={this.passwordChange}
+            value={userInfo.password}
+          />
+          <TouchableOpacity
+            style={styles.textLink}
+            onPress={() => this.props.navigation.navigate("Loading")}
+          >
+            <Text style={{ color: "gray" }}>회원가입</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.buttonArea}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={this.registerForPushNotificationsAsync}
+          >
+            <Text style={styles.buttonTitle}>Login</Text>
+          </TouchableOpacity>
+        </View>
+</KeyboardAvoidingView>
+>>>>>>> a2b005eb85673a16f29b7d41136f910c4b5f9f7c
       </TouchableWithoutFeedback>
     );
   }
@@ -153,3 +203,5 @@ const styles = StyleSheet.create({
     color: "white"
   }
 });
+
+export default inject("userInfo")(observer(LoginScreen));
