@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Button, Text } from "react-native";
+import { View, Button, Text, StyleSheet } from "react-native";
 
 export default class OrderBox extends Component {
   constructor(props) {
