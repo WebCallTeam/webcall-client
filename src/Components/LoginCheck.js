@@ -1,5 +1,12 @@
-import React from 'react';
-import { ActivityIndicator, AsyncStorage, StatusBar, StyleSheet, View, Text } from 'react-native';
+import React from "react";
+import {
+  ActivityIndicator,
+  AsyncStorage,
+  StatusBar,
+  StyleSheet,
+  View,
+  Text
+} from "react-native";
 
 class LoginCheck extends React.Component {
   componentDidMount() {
@@ -7,14 +14,13 @@ class LoginCheck extends React.Component {
   }
 
   _bootstrapAsync = async () => {
-    const userToken =  await AsyncStorage.getItem('userToken');
-    this.props.navigation.navigate(userToken ? 'App' : 'Auth');
+    const userToken = await AsyncStorage.getItem("userToken");
+    this.props.navigation.navigate(userToken ? "App" : "Auth");
   };
- 
 
   render() {
     return (
-      <View>
+      <View style={{ flex: 1 }}>
         <ActivityIndicator />
         <StatusBar barStyle="default" />
       </View>
