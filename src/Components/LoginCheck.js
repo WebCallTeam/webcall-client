@@ -16,14 +16,11 @@ class LoginCheck extends React.Component {
   _bootstrapAsync = async () => {
     const userToken = await AsyncStorage.getItem("userToken");
     this.props.navigation.navigate(userToken ? "App" : "Auth");
-
-    // test local
-    //this.props.navigation.navigate("Auth");
   };
 
   render() {
     return (
-      <View>
+      <View style={{ flex: 1 }}>
         <ActivityIndicator />
         <StatusBar barStyle="default" />
       </View>
