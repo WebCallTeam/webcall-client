@@ -19,7 +19,8 @@ import * as Permissions from "expo-permissions";
 import { inject, observer } from "mobx-react";
 import { observable } from "mobx";
 
-const PUSH_ENDPOINT = "https://webcall-dbserver.herokuapp.com/callcustomer/";
+//const PUSH_ENDPOINT = "https://webcall-dbserver.herokuapp.com/callcustomer/";
+const PUSH_ENDPOINT = "http://localhost:3000/callcustomer/";
 
 class LoginScreen extends Component {
   static navigationOptions = {
@@ -60,23 +61,31 @@ class LoginScreen extends Component {
 
     // Get the token that uniquely identifies this device
     let token = await Notifications.getExpoPushTokenAsync();
-
+    // testing local
+    //let token = "this is a local token";
     AsyncStorage.setItem("userToken", token);
 
     const { userInfo } = await this.props;
 
-    return fetch(PUSH_ENDPOINT, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        name: userInfo.name,
-        password: userInfo.password,
-        expo_token: token
-      })
-    });
+    try {
+      let response = await fetch(PUSH_ENDPOINT, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name: userInfo.name,
+          password: userInfo.password,
+          expo_token: token
+        })
+      });
+
+      let responseJson = await response.json();
+      console.log(responseJson);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   nameChange(value) {
