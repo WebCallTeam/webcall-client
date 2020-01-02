@@ -17,10 +17,9 @@ import {
 import { Notifications } from "expo";
 import * as Permissions from "expo-permissions";
 import { inject, observer } from "mobx-react";
-import { observable } from "mobx";
+import { userInfo } from "../store";
 
-//const PUSH_ENDPOINT = "https://webcall-dbserver.herokuapp.com/callcustomer/";
-const PUSH_ENDPOINT = "http://localhost:3000/callcustomer/";
+const PUSH_ENDPOINT = "https://webcall-dbserver.herokuapp.com/callcustomer/";
 
 class LoginScreen extends Component {
   static navigationOptions = {
@@ -31,9 +30,13 @@ class LoginScreen extends Component {
     super(props);
 
     this.nameChange = this.nameChange.bind(this);
-    this.passwordChange = this.passwordChange.bind(this);
   }
 
+  state = {
+    notification: null,
+    name: "",
+    messageText: ""
+  };
   static navigationOptions = {
     title: "WEBCALL",
     headerTitleStyle: { alignSelf: "center", textAlign: "center", flex: 1 }
@@ -54,7 +57,7 @@ class LoginScreen extends Component {
       finalStatus = status;
     }
 
-    // Stop here if the user did not grant permissions
+    // Stop here no the user did not grant permissions
     if (finalStatus !== "granted") {
       return;
     }
@@ -76,32 +79,45 @@ class LoginScreen extends Component {
         },
         body: JSON.stringify({
           name: userInfo.name,
-          password: userInfo.password,
+          password: "default",
           expo_token: token
         })
       });
 
       let responseJson = await response.json();
-      console.log(responseJson);
+
+      this.setNotification(responseJson.data);
+      //console.log(responseJson);
     } catch (err) {
       console.log(err);
     }
   };
 
   nameChange(value) {
-    console.log(value);
     const { userInfo } = this.props;
     userInfo.setName(value);
+    //this.setState({ name: value });
   }
 
-  passwordChange(value) {
+  notificationChange = value => {
     const { userInfo } = this.props;
+    userInfo.setNotification(value);
+  };
 
-    userInfo.setPassword(value);
+  handleNotification = notification => {
+    this.setState({ notification });
+  };
+
+  componentDidMount() {
+    this.registerForPushNotificationsAsync();
+    this.notificationSubscription = Notifications.addListener(
+      this.notificationChange
+    );
   }
 
   render() {
     const { userInfo } = this.props;
+    //const { name } = this.state;
 
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -116,17 +132,16 @@ class LoginScreen extends Component {
               onChangeText={this.nameChange}
               value={userInfo.name}
             />
-            <TextInput
-              style={styles.textForm}
-              placeholder={"Password"}
-              onChangeText={this.passwordChange}
-              value={userInfo.password}
-            />
+            <TextInput style={styles.textForm} placeholder={"password"} />
             <TouchableOpacity
               style={styles.textLink}
               onPress={() => this.props.navigation.navigate("Loading")}
             >
-              <Text style={{ color: "gray" }}>회원가입</Text>
+              <Text style={{ color: "gray" }}>
+                {AsyncStorage.getItem("orderData") == null
+                  ? "회원가입"
+                  : typeof AsyncStorage.getItem("orderData").remote}
+              </Text>
             </TouchableOpacity>
           </View>
           <View style={styles.buttonArea}>
@@ -134,7 +149,7 @@ class LoginScreen extends Component {
               style={styles.button}
               onPress={this.registerForPushNotificationsAsync}
             >
-              <Text style={styles.buttonTitle}>Login</Text>
+              <Text style={styles.buttonTitle}>login</Text>
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>

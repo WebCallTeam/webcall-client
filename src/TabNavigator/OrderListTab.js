@@ -2,11 +2,13 @@ import React, { Component } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Icon } from "native-base";
 import OrderBox from "../Components/OrderBox";
+import { inject, observer } from "mobx-react";
+import { userInfo } from "../store";
 
-export default class OrderListTab extends Component {
+class OrderListTab extends Component {
   constructor(props) {
     super(props);
-    this.state = { datas: datas };
+    // this.state = { datas: datas };
   }
 
   static navigationOptions = {
@@ -15,11 +17,28 @@ export default class OrderListTab extends Component {
     )
   };
 
+  checkOrder() {
+    const { userInfo } = this.props;
+
+    return userInfo.notification &&
+      userInfo.notification.data.target != "no data" ? (
+      <OrderBox />
+    ) : (
+      <Text>현재 주문이 없습니다</Text>
+    );
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        {this.state.datas.map((data, index) => {
-          return <OrderBox index={data.index} />;
+        {/* {userInfo.notification &&
+        userInfo.notification.data.target != "no data" ? (
+          <OrderBox />
+        ) : (
+          <Text>현재 주문이 없습니다</Text>
+        )} */}
+        {userInfo.notificationList.map(index => {
+          return <OrderBox index={index} />;
         })}
       </View>
     );
@@ -31,3 +50,5 @@ const styles = StyleSheet.create({
     flex: 1
   }
 });
+
+export default inject("userInfo")(observer(OrderListTab));
