@@ -29,6 +29,10 @@ export default class UserInfo {
     this.notification = notification;
   }
 
+  @action setNotificationList(notificationArray) {
+    this.notificationList = Array.from(notificationArray);
+  }
+
   @action addNotification(notification) {
     this.notificationList.push(notification);
   }

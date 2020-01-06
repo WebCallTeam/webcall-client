@@ -137,11 +137,7 @@ class LoginScreen extends Component {
               style={styles.textLink}
               onPress={() => this.props.navigation.navigate("Loading")}
             >
-              <Text style={{ color: "gray" }}>
-                {AsyncStorage.getItem("orderData") == null
-                  ? "회원가입"
-                  : typeof AsyncStorage.getItem("orderData").remote}
-              </Text>
+              <Text style={{ color: "gray" }}>회원가입</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.buttonArea}>

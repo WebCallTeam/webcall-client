@@ -1,5 +1,11 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  AsyncStorage
+} from "react-native";
 import { Icon } from "native-base";
 import OrderBox from "../Components/OrderBox";
 import { inject, observer } from "mobx-react";
@@ -8,7 +14,8 @@ import { userInfo } from "../store";
 class OrderListTab extends Component {
   constructor(props) {
     super(props);
-    // this.state = { datas: datas };
+    this.dataList = [];
+    // this.state = { datas: datas }
   }
 
   static navigationOptions = {
@@ -17,18 +24,20 @@ class OrderListTab extends Component {
     )
   };
 
-  checkOrder() {
-    const { userInfo } = this.props;
+  // AsyncStorage를 이용한 데이터 가져오기
+  getOrderData = () => {
+    const orderData = AsyncStorage.getItem("orderData");
 
-    return userInfo.notification &&
-      userInfo.notification.data.target != "no data" ? (
-      <OrderBox />
-    ) : (
-      <Text>현재 주문이 없습니다</Text>
-    );
-  }
+    let orderDataList = JSON.parse(orderData);
+    if (!orderDataList) {
+      orderDataList = [];
+    }
+
+    return orderDataList;
+  };
 
   render() {
+    //let dataList = this.getOrderData();
     return (
       <View style={styles.container}>
         {/* {userInfo.notification &&

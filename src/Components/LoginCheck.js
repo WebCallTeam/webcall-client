@@ -20,34 +20,32 @@ class LoginCheck extends React.Component {
 
   _bootstrapAsync = async () => {
     const userToken = await AsyncStorage.getItem("userToken");
-    const { userInfo } = await this.props;
-
-    if (userInfo.notification.origin == "selected") {
-      let orderData = await AsyncStorage.getItem(
-        "orderData",
-        (error, result) => {
-          if (error) {
-            orderData = null;
-          }
-        }
-      );
-
-      if (orderData == null) {
-        AsyncStorage.setItem("orderData", userInfo.notification.data);
-      } else {
-        AsyncStorage.mergeItem("orderData", userInfo.notification.data);
-      }
-    }
 
     this.props.navigation.navigate(userToken ? "App" : "Auth");
-    //this.props.navigation.navigate("App");
+    //this.props.navigation.navigate("Auth");
   };
 
-  handleNotification = value => {
-    const { userInfo } = this.props;
+  handleNotification = async value => {
+    const { userInfo } = await this.props;
 
     userInfo.setNotification(value);
     userInfo.addNotification(value);
+
+    const oldOrderData = await AsyncStorage.getItem("orderData");
+
+    let newOrderData = JSON.parse(oldOrderData);
+    if (!newOrderData) {
+      newOrderData = [];
+    }
+    newOrderData.push(value);
+
+    await AsyncStorage.setItem("orderData", JSON.stringify(newOrderData))
+      .then(() => {
+        console.log("Save Complete!");
+      })
+      .catch(() => {
+        console.log("There was an error saving the orderData");
+      });
   };
 
   render() {
