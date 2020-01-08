@@ -9,7 +9,7 @@ export default class UserInfo {
     remote: true
   };
 
-  @observable notificationList = [];
+  @observable orderList = [];
 
   @observable testText = "가입";
 
@@ -29,15 +29,15 @@ export default class UserInfo {
     this.notification = notification;
   }
 
-  @action setNotificationList(notificationArray) {
-    this.notificationList = Array.from(notificationArray);
+  @action setOrderList(notificationArray) {
+    this.orderList = Array.from(notificationArray);
   }
 
   @action addNotification(notification) {
-    this.notificationList.push(notification);
+    this.orderList.push(notification);
   }
 
   @action deleteNotification(value) {
-    this.notificationList.splice(value, 1);
+    this.orderList.splice(value, 1);
   }
 }

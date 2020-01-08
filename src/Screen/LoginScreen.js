@@ -79,15 +79,15 @@ class LoginScreen extends Component {
         },
         body: JSON.stringify({
           name: userInfo.name,
-          password: "default",
           expo_token: token
         })
       });
 
       let responseJson = await response.json();
 
-      this.setNotification(responseJson.data);
       //console.log(responseJson);
+
+      return this.props.navigation.navigate("App");
     } catch (err) {
       console.log(err);
     }
@@ -107,13 +107,6 @@ class LoginScreen extends Component {
   handleNotification = notification => {
     this.setState({ notification });
   };
-
-  componentDidMount() {
-    this.registerForPushNotificationsAsync();
-    this.notificationSubscription = Notifications.addListener(
-      this.notificationChange
-    );
-  }
 
   render() {
     const { userInfo } = this.props;

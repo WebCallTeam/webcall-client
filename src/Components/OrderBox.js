@@ -50,17 +50,14 @@ class OrderBox extends Component {
   };
 
   deleteList = value => {
-    // const { userInfo } = this.props;
-    // userInfo.deleteNotification(value);
+    this.props.unMount();
   };
 
   render() {
     return (
       <View style={styles.elem}>
         <View style={styles.userInfo}>
-          <Text style={styles.name}>
-            {userInfo.notification.data.target}번 주문
-          </Text>
+          <Text style={styles.name}>{this.props.index}번 주문</Text>
         </View>
         <View style={styles.userComment}>
           <TouchableOpacity style={styles.button} onPress={this.callCustomer}>

@@ -16,6 +16,7 @@ class OrderListTab extends Component {
     super(props);
     this.dataList = [];
     // this.state = { datas: datas }
+    this.removeOrderBox = this.removeOrderBox.bind(this);
   }
 
   static navigationOptions = {
@@ -36,6 +37,14 @@ class OrderListTab extends Component {
     return orderDataList;
   };
 
+  state = {
+    status: [1, 2, 3]
+  };
+
+  removeOrderBox = () => {
+    this.setState((status = 3));
+  };
+
   render() {
     //let dataList = this.getOrderData();
     return (
@@ -46,8 +55,14 @@ class OrderListTab extends Component {
         ) : (
           <Text>현재 주문이 없습니다</Text>
         )} */}
-        {userInfo.notificationList.map(index => {
-          return <OrderBox index={index} />;
+        {userInfo.orderList.map((value, index) => {
+          return this.state.status != 3 ? (
+            <OrderBox
+              value={value}
+              index={index}
+              unMount={this.removeOrderBox}
+            />
+          ) : null;
         })}
       </View>
     );

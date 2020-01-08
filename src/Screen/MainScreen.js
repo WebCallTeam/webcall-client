@@ -3,6 +3,8 @@ import { StyleSheet, Text, View, Platform } from "react-native";
 import { createMaterialTopTabNavigator } from "react-navigation-tabs";
 import { createAppContainer } from "react-navigation";
 import { HomeTab, OrderListTab, ProfileTab } from "../TabNavigator";
+import { inject, observer } from "mobx-react";
+import { Notifications } from "expo";
 
 const AppTabNavigator = createMaterialTopTabNavigator(
   {
@@ -38,8 +40,22 @@ const AppTabNavigator = createMaterialTopTabNavigator(
 
 const AppTabContainet = createAppContainer(AppTabNavigator);
 
-export default class MainScreen extends Component {
+class MainScreen extends Component {
+  componentDidMount() {
+    this.notificationSubscription = Notifications.addListener(
+      this.handleNotification
+    );
+  }
+
+  handleNotification = async value => {
+    const { userInfo } = this.props;
+
+    this.props.navigation.navigate("OrderListTab");
+  };
+
   render() {
     return <AppTabContainet />;
   }
 }
+
+export default inject("userInfo")(observer(MainScreen));
