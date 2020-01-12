@@ -92,7 +92,10 @@ class OrderBox extends Component {
         <Dialog.Container visible={this.state.dialogVisible}>
           <Dialog.Title>주문 번호 할당</Dialog.Title>
           <Dialog.Description>해당주문의 번호를 입력하세요</Dialog.Description>
-          <Dialog.Input label="order" onSubmitEditing={()=>this.setState({orderData=order})}></Dialog.Input>
+          <Dialog.Input
+            value={this.state.orderData}
+            onChangeText={orderData => this.setState({ orderData })}
+          ></Dialog.Input>
           <Dialog.Button
             label="취소"
             onPress={this.setState({ dialogVisible: false })}
