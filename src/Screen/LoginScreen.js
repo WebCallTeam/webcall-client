@@ -8,7 +8,8 @@ import {
   AsyncStorage,
   TouchableWithoutFeedback,
   Keyboard,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  CheckBox
 } from "react-native";
 import {
   widthPercentageToDP as wp,
@@ -18,6 +19,7 @@ import { Notifications } from "expo";
 import * as Permissions from "expo-permissions";
 import { inject, observer } from "mobx-react";
 import { userInfo } from "../store";
+import { Icon } from "native-base";
 
 const PUSH_ENDPOINT = "https://webcall-dbserver.herokuapp.com/callcustomer/";
 
@@ -35,7 +37,8 @@ class LoginScreen extends Component {
   state = {
     notification: null,
     name: "",
-    messageText: ""
+    messageText: "",
+    check: false
   };
   static navigationOptions = {
     title: "WEBCALL",
@@ -87,7 +90,7 @@ class LoginScreen extends Component {
 
       //console.log(responseJson);
 
-      return this.props.navigation.navigate("App");
+      return this.props.navigation.navigate("Loading");
     } catch (err) {
       console.log(err);
     }
@@ -125,13 +128,21 @@ class LoginScreen extends Component {
               onChangeText={this.nameChange}
               value={userInfo.name}
             />
-            <TextInput style={styles.textForm} placeholder={"password"} />
-            <TouchableOpacity
-              style={styles.textLink}
-              onPress={() => this.props.navigation.navigate("Loading")}
+            <View
+              style={{
+                justifyContent: "flex-end",
+                alignItems: "center",
+                flexDirection: "row"
+              }}
             >
-              <Text style={{ color: "gray" }}>회원가입</Text>
-            </TouchableOpacity>
+              <CheckBox
+                value={this.state.check}
+                onValueChange={() =>
+                  this.setState({ check: !this.state.check })
+                }
+              />
+              <Text>관리자 로그인</Text>
+            </View>
           </View>
           <View style={styles.buttonArea}>
             <TouchableOpacity

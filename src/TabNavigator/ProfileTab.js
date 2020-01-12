@@ -8,7 +8,11 @@ import {
 } from "react-native";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { Icon } from "native-base";
-import { SwitchActions, NavigationActions } from "react-navigation";
+import {
+  SwitchActions,
+  NavigationActions,
+  StackActions
+} from "react-navigation";
 
 export default class ProfileTab extends Component {
   static navigationOptions = {
@@ -19,7 +23,7 @@ export default class ProfileTab extends Component {
 
   clearToken = () => {
     AsyncStorage.clear();
-    super.props.navigation.dispatch(SwitchActions.jumpTo({ Loading }));
+    this.props.navigation.dispatch(StackActions.popToTop());
   };
 
   render() {
