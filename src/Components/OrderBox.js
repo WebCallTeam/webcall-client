@@ -20,6 +20,7 @@ class OrderBox extends Component {
 
   // 주문번호는 local에서 관리 , mobx 사용안함
   state = {
+    tmpOrder: "",
     orderData: "",
     dialogVisible: false
   };
@@ -55,6 +56,22 @@ class OrderBox extends Component {
   };
 
   handleOrderData = () => {
+    this.setState({ orderData: this.state.tmpOrder });
+    this.setState({ dialogVisible: false });
+  };
+
+  handelDialog(data) {
+    this.setState({
+      tmpOrder: data.nativeEvent.text
+    });
+  }
+
+  openDialog = () => {
+    this.setState({ tmpOrder: "" });
+    this.setState({ dialogVisible: true });
+  };
+
+  onCancel = () => {
     this.setState({ dialogVisible: false });
   };
 
@@ -62,6 +79,11 @@ class OrderBox extends Component {
     return (
       <View style={styles.elem}>
         <View style={styles.userInf}>
+          {/* {console.log(this.props.userInfo)}
+          {console.log("\n")} */}
+          <Text style={styles.name}>
+            {this.props.userInfo.notification.data.name + "님의 주문"}
+          </Text>
           <Text style={styles.name}>
             {this.state.orderData
               ? this.state.orderData + " 번 주문"
@@ -77,10 +99,7 @@ class OrderBox extends Component {
               <Text>호출</Text>
             </TouchableOpacity>
           ) : (
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => this.setState({ dialogVisible: true })}
-            >
+            <TouchableOpacity style={styles.button} onPress={this.openDialog}>
               <Text>확인</Text>
             </TouchableOpacity>
           )}
@@ -89,18 +108,18 @@ class OrderBox extends Component {
           </TouchableOpacity>
         </View>
 
-        <Dialog.Container visible={this.state.dialogVisible}>
+        <Dialog.Container
+          visible={this.state.dialogVisible}
+          onBackdropPress={this.onCancel}
+        >
           <Dialog.Title>주문 번호 할당</Dialog.Title>
           <Dialog.Description>해당주문의 번호를 입력하세요</Dialog.Description>
           <Dialog.Input
-            value={this.state.orderData}
-            onChangeText={orderData => this.setState({ orderData })}
+            value={this.state.tmpOrder}
+            onChange={tmpOrder => this.handelDialog(tmpOrder)}
           ></Dialog.Input>
-          <Dialog.Button
-            label="취소"
-            onPress={this.setState({ dialogVisible: false })}
-          />
-          <Dialog.Button label="할당" onPress={this.handleOrderData} />
+          <Dialog.Button label="취소" onPress={this.onCancel} />
+          <Dialog.Button label="할당" onPress={() => this.handleOrderData()} />
         </Dialog.Container>
       </View>
     );
@@ -118,7 +137,7 @@ const styles = StyleSheet.create({
     padding: 5
   },
   userInf: {
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center"
   },
   userComment: {
