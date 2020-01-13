@@ -46,6 +46,7 @@ class LoginScreen extends Component {
   };
 
   registerForPushNotificationsAsync = async () => {
+    setTimeout(() => {}, 1000);
     const { status: existingStatus } = await Permissions.getAsync(
       Permissions.NOTIFICATIONS
     );
@@ -89,7 +90,7 @@ class LoginScreen extends Component {
       let responseJson = await response.json();
 
       //console.log(responseJson);
-
+      this.nameChange("");
       return this.props.navigation.navigate("Loading");
     } catch (err) {
       console.log(err);

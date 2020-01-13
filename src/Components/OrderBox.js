@@ -22,6 +22,7 @@ class OrderBox extends Component {
   state = {
     tmpOrder: "",
     orderData: "",
+    name: this.props.userInfo.notification.data.name,
     dialogVisible: false
   };
 
@@ -79,11 +80,7 @@ class OrderBox extends Component {
     return (
       <View style={styles.elem}>
         <View style={styles.userInf}>
-          {/* {console.log(this.props.userInfo)}
-          {console.log("\n")} */}
-          <Text style={styles.name}>
-            {this.props.userInfo.notification.data.name + "님의 주문"}
-          </Text>
+          <Text style={styles.name}>{this.state.name + "님의 주문"}</Text>
           <Text style={styles.name}>
             {this.state.orderData
               ? this.state.orderData + " 번 주문"

@@ -6,7 +6,10 @@ import {
   AsyncStorage,
   TouchableOpacity
 } from "react-native";
-import { heightPercentageToDP as hp } from "react-native-responsive-screen";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp
+} from "react-native-responsive-screen";
 import { Icon } from "native-base";
 import {
   SwitchActions,
@@ -22,18 +25,20 @@ export default class ProfileTab extends Component {
   };
 
   clearToken = () => {
-    AsyncStorage.clear();
-    this.props.navigation.dispatch(StackActions.popToTop());
+    AsyncStorage.removeItem("userToken");
+    setTimeout(() => this.props.navigation.navigate("Loading"), 1000);
   };
 
   render() {
     return (
       <View style={styles.container}>
+        <View style={{ height: 30 }} />
         <View style={styles.buttonArea}>
           <TouchableOpacity style={styles.button} onPress={this.clearToken}>
             <Text style={styles.buttonTitle}>Logout</Text>
           </TouchableOpacity>
         </View>
+        <View style={{ height: 30 }} />
       </View>
     );
   }
@@ -42,6 +47,8 @@ export default class ProfileTab extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingLeft: wp("10%"),
+    paddingRight: wp("10%"),
     alignItems: "center",
     justifyContent: "center"
   },

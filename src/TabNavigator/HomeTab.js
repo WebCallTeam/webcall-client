@@ -43,9 +43,10 @@ export default class HomeTab extends Component {
           justifyContent: "flex-end"
         }}
       >
+        <View style={{ height: 30 }} />
         <BarCodeScanner
           onBarCodeScanned={scanned ? undefined : this.handleBarCodeScanned}
-          style={StyleSheet.absoluteFillObject}
+          style={{ flex: 1 }}
         />
 
         {scanned && (
@@ -54,6 +55,7 @@ export default class HomeTab extends Component {
             onPress={() => this.setState({ scanned: false })}
           />
         )}
+        <View style={{ height: 30 }} />
       </View>
     );
   }
