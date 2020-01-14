@@ -9,7 +9,9 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   KeyboardAvoidingView,
-  CheckBox
+  CheckBox,
+  Switch,
+  Platform
 } from "react-native";
 import {
   widthPercentageToDP as wp,
@@ -21,7 +23,9 @@ import { inject, observer } from "mobx-react";
 import { userInfo } from "../store";
 import { Icon } from "native-base";
 
-const PUSH_ENDPOINT = "https://webcall-dbserver.herokuapp.com/callcustomer/";
+const CUSTOMER_ENDPOINT =
+  "https://webcall-dbserver.herokuapp.com/callcustomer/";
+const MANAGER_ENDPOINT = "https://webcall-dbserver.herokuapp.com/owner/";
 
 class LoginScreen extends Component {
   static navigationOptions = {
@@ -38,7 +42,8 @@ class LoginScreen extends Component {
     notification: null,
     name: "",
     messageText: "",
-    check: false
+    check: false,
+    id: ""
   };
   static navigationOptions = {
     title: "WEBCALL",
@@ -74,6 +79,9 @@ class LoginScreen extends Component {
 
     const { userInfo } = await this.props;
 
+    // check if customer or manager
+    let PUSH_ENDPOINT = this.state.check ? MANAGER_ENDPOINT : CUSTOMER_ENDPOINT;
+
     try {
       let response = await fetch(PUSH_ENDPOINT, {
         method: "POST",
@@ -89,8 +97,12 @@ class LoginScreen extends Component {
 
       let responseJson = await response.json();
 
-      //console.log(responseJson);
       this.nameChange("");
+
+      // set it for owner id
+      // AsyncStorage.setItem("userID", responseJson.id);
+      // this.setState({ id: responseJson.id });
+
       return this.props.navigation.navigate("Loading");
     } catch (err) {
       console.log(err);
@@ -136,12 +148,22 @@ class LoginScreen extends Component {
                 flexDirection: "row"
               }}
             >
-              <CheckBox
-                value={this.state.check}
-                onValueChange={() =>
-                  this.setState({ check: !this.state.check })
-                }
-              />
+              {Platform.OS === "ios" ? (
+                <Switch
+                  value={this.state.check}
+                  onValueChange={() =>
+                    this.setState({ check: !this.state.check })
+                  }
+                />
+              ) : (
+                <CheckBox
+                  value={this.state.check}
+                  onValueChange={() =>
+                    this.setState({ check: !this.state.check })
+                  }
+                />
+              )}
+
               <Text>관리자 로그인</Text>
             </View>
           </View>

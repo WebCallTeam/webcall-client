@@ -10,7 +10,8 @@ import { inject, observer } from "mobx-react";
 import { userInfo, orderInfo } from "../store";
 import Dialog from "react-native-dialog";
 
-const PUSH_ENDPOINT = "https://webcall-dbserver.herokuapp.com/owner/";
+const PUSH_ENDPOINT = "https://webcall-dbserver.herokuapp.com/owner/1";
+const MANAGER_TO_CLIENT = "https://webcall-dbserver.herokuapp.com/client/";
 
 class OrderBox extends Component {
   constructor(props) {
@@ -23,7 +24,8 @@ class OrderBox extends Component {
     tmpOrder: "",
     orderData: "",
     name: this.props.userInfo.notification.data.name,
-    dialogVisible: false
+    dialogVisible: false,
+    token: ""
   };
 
   // 주문 완료 버튼
@@ -56,9 +58,36 @@ class OrderBox extends Component {
     this.props.unMount();
   };
 
-  handleOrderData = () => {
+  handleOrderData = async () => {
     this.setState({ orderData: this.state.tmpOrder });
     this.setState({ dialogVisible: false });
+
+    const { userInfo } = this.props;
+
+    try {
+      // token data from mobx
+      let token = await userInfo.orderList[userInfo.index].data.token;
+
+      let response = await fetch(MANAGER_TO_CLIENT, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          number: this.state.tmpOrder,
+          expo_token: token
+        })
+      });
+
+      let responseJson = await response.json();
+
+      //console.log(responseJson);
+      this.nameChange("");
+      return this.props.navigation.navigate("Loading");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   handelDialog(data) {
