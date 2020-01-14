@@ -4,7 +4,8 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  AsyncStorage
+  AsyncStorage,
+  ScrollView
 } from "react-native";
 import { Icon } from "native-base";
 import OrderBox from "../Components/OrderBox";
@@ -48,23 +49,27 @@ class OrderListTab extends Component {
   render() {
     //let dataList = this.getOrderData();
     return (
-      <View style={styles.container}>
-        {/* {userInfo.notification &&
+      <ScrollView>
+        <View style={styles.container}>
+          <View style={{ height: 30 }} />
+          {/* {userInfo.notification &&
         userInfo.notification.data.target != "no data" ? (
           <OrderBox />
         ) : (
           <Text>현재 주문이 없습니다</Text>
         )} */}
-        {userInfo.orderList.map((value, index) => {
-          return this.state.status != 3 ? (
-            <OrderBox
-              value={value}
-              index={index}
-              unMount={this.removeOrderBox}
-            />
-          ) : null;
-        })}
-      </View>
+          {userInfo.orderList.map((value, index) => {
+            return this.state.status != 3 ? (
+              <OrderBox
+                value={value}
+                key={index}
+                unMount={this.removeOrderBox}
+              />
+            ) : null;
+          })}
+          <View style={{ height: 30 }} />
+        </View>
+      </ScrollView>
     );
   }
 }

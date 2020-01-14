@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { inject, observer } from "mobx-react";
 import { userInfo, orderInfo } from "../store";
+import Dialog from "react-native-dialog";
 
 const PUSH_ENDPOINT = "https://webcall-dbserver.herokuapp.com/owner/";
 
@@ -19,14 +20,17 @@ class OrderBox extends Component {
 
   // 주문번호는 local에서 관리 , mobx 사용안함
   state = {
-    orderData: ""
+    tmpOrder: "",
+    orderData: "",
+    name: this.props.userInfo.notification.data.name,
+    dialogVisible: false
   };
 
   // 주문 완료 버튼
-  callCustomerWhenDone = () => {
+  callCustomerWhenDone = async () => {
     // 점장의 경우기 때문에
     // 점장이 가지고 있는 리스트에 저장되 있는 token 정보를 읽어오는 로직
-    const {userInfo} = this.props;
+    const { userInfo } = await this.props;
     try {
       let response = await fetch(PUSH_ENDPOINT + userInfo.id, {
         method: "POST",
@@ -40,7 +44,7 @@ class OrderBox extends Component {
         })
       });
 
-      //확인 로직 
+      //확인 로직
       // let responseJson = await response.json();
       // console.log(responseJson);
     } catch (err) {
@@ -52,20 +56,68 @@ class OrderBox extends Component {
     this.props.unMount();
   };
 
+  handleOrderData = () => {
+    this.setState({ orderData: this.state.tmpOrder });
+    this.setState({ dialogVisible: false });
+  };
+
+  handelDialog(data) {
+    this.setState({
+      tmpOrder: data.nativeEvent.text
+    });
+  }
+
+  openDialog = () => {
+    this.setState({ tmpOrder: "" });
+    this.setState({ dialogVisible: true });
+  };
+
+  onCancel = () => {
+    this.setState({ dialogVisible: false });
+  };
+
   render() {
     return (
       <View style={styles.elem}>
-        <View style={styles.userInfo}>
-          <Text style={styles.name}>{this.state.orderData ? this.state.orderData + " 번 주문" : "주문 번호를 지정해주세요"}</Text>
+        <View style={styles.userInf}>
+          <Text style={styles.name}>{this.state.name + "님의 주문"}</Text>
+          <Text style={styles.name}>
+            {this.state.orderData
+              ? this.state.orderData + " 번 주문"
+              : "주문 번호를 지정해주세요"}
+          </Text>
         </View>
         <View style={styles.userComment}>
-          <TouchableOpacity style={styles.button} onPress={this.callCustomerWhenDone}>
-            <Text>확인</Text>
-          </TouchableOpacity>
+          {this.state.orderData ? (
+            <TouchableOpacity
+              style={styles.button}
+              onPress={this.callCustomerWhenDone}
+            >
+              <Text>호출</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity style={styles.button} onPress={this.openDialog}>
+              <Text>확인</Text>
+            </TouchableOpacity>
+          )}
           <TouchableOpacity style={styles.button} onPress={this.deleteList}>
             <Text>제거</Text>
           </TouchableOpacity>
         </View>
+
+        <Dialog.Container
+          visible={this.state.dialogVisible}
+          onBackdropPress={this.onCancel}
+        >
+          <Dialog.Title>주문 번호 할당</Dialog.Title>
+          <Dialog.Description>해당주문의 번호를 입력하세요</Dialog.Description>
+          <Dialog.Input
+            value={this.state.tmpOrder}
+            onChange={tmpOrder => this.handelDialog(tmpOrder)}
+          ></Dialog.Input>
+          <Dialog.Button label="취소" onPress={this.onCancel} />
+          <Dialog.Button label="할당" onPress={() => this.handleOrderData()} />
+        </Dialog.Container>
       </View>
     );
   }
@@ -81,8 +133,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
     padding: 5
   },
-  userInfo: {
-    flexDirection: "row",
+  userInf: {
+    flexDirection: "column",
     alignItems: "center"
   },
   userComment: {
