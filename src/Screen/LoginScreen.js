@@ -9,7 +9,9 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   KeyboardAvoidingView,
-  CheckBox
+  CheckBox,
+  Switch,
+  Platform
 } from "react-native";
 import {
   widthPercentageToDP as wp,
@@ -136,12 +138,21 @@ class LoginScreen extends Component {
                 flexDirection: "row"
               }}
             >
-              <CheckBox
-                value={this.state.check}
-                onValueChange={() =>
-                  this.setState({ check: !this.state.check })
-                }
-              />
+              {Platform.OS === "ios" ? (
+                <Switch
+                  value={this.state.check}
+                  onValueChange={() =>
+                    this.setState({ check: !this.state.check })
+                  }
+                />
+              ) : (
+                <CheckBox
+                  value={this.state.check}
+                  onValueChange={() =>
+                    this.setState({ check: !this.state.check })
+                  }
+                />
+              )}
               <Text>관리자 로그인</Text>
             </View>
           </View>

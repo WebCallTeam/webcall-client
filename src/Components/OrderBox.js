@@ -23,7 +23,8 @@ class OrderBox extends Component {
     tmpOrder: "",
     orderData: "",
     name: this.props.userInfo.notification.data.name,
-    dialogVisible: false
+    dialogVisible: false,
+    deleted: false
   };
 
   // 주문 완료 버튼
@@ -52,8 +53,8 @@ class OrderBox extends Component {
     }
   };
 
-  deleteList = value => {
-    this.props.unMount();
+  deleteList = () => {
+    this.setState({ deleted: true });
   };
 
   handleOrderData = () => {
@@ -77,49 +78,58 @@ class OrderBox extends Component {
   };
 
   render() {
-    return (
-      <View style={styles.elem}>
-        <View style={styles.userInf}>
-          <Text style={styles.name}>{this.state.name + "님의 주문"}</Text>
-          <Text style={styles.name}>
-            {this.state.orderData
-              ? this.state.orderData + " 번 주문"
-              : "주문 번호를 지정해주세요"}
-          </Text>
-        </View>
-        <View style={styles.userComment}>
-          {this.state.orderData ? (
-            <TouchableOpacity
-              style={styles.button}
-              onPress={this.callCustomerWhenDone}
-            >
-              <Text>호출</Text>
+    if (!this.state.deleted) {
+      return (
+        <View style={styles.elem}>
+          <View style={styles.userInf}>
+            <Text style={styles.name}>{this.state.name + "님의 주문"}</Text>
+            <Text style={styles.name}>
+              {this.state.orderData
+                ? this.state.orderData + " 번 주문"
+                : "주문 번호를 지정해주세요"}
+            </Text>
+          </View>
+          <View style={styles.userComment}>
+            {this.state.orderData ? (
+              <TouchableOpacity
+                style={styles.button}
+                onPress={this.callCustomerWhenDone}
+              >
+                <Text>호출</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity style={styles.button} onPress={this.openDialog}>
+                <Text>확인</Text>
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity style={styles.button} onPress={this.deleteList}>
+              <Text>제거</Text>
             </TouchableOpacity>
-          ) : (
-            <TouchableOpacity style={styles.button} onPress={this.openDialog}>
-              <Text>확인</Text>
-            </TouchableOpacity>
-          )}
-          <TouchableOpacity style={styles.button} onPress={this.deleteList}>
-            <Text>제거</Text>
-          </TouchableOpacity>
-        </View>
+          </View>
 
-        <Dialog.Container
-          visible={this.state.dialogVisible}
-          onBackdropPress={this.onCancel}
-        >
-          <Dialog.Title>주문 번호 할당</Dialog.Title>
-          <Dialog.Description>해당주문의 번호를 입력하세요</Dialog.Description>
-          <Dialog.Input
-            value={this.state.tmpOrder}
-            onChange={tmpOrder => this.handelDialog(tmpOrder)}
-          ></Dialog.Input>
-          <Dialog.Button label="취소" onPress={this.onCancel} />
-          <Dialog.Button label="할당" onPress={() => this.handleOrderData()} />
-        </Dialog.Container>
-      </View>
-    );
+          <Dialog.Container
+            visible={this.state.dialogVisible}
+            onBackdropPress={this.onCancel}
+          >
+            <Dialog.Title>주문 번호 할당</Dialog.Title>
+            <Dialog.Description>
+              해당주문의 번호를 입력하세요
+            </Dialog.Description>
+            <Dialog.Input
+              value={this.state.tmpOrder}
+              onChange={tmpOrder => this.handelDialog(tmpOrder)}
+              wrapperStyle={{ color: "black" }}
+            ></Dialog.Input>
+            <Dialog.Button label="취소" onPress={this.onCancel} />
+            <Dialog.Button
+              label="할당"
+              onPress={() => this.handleOrderData()}
+            />
+          </Dialog.Container>
+        </View>
+      );
+    }
+    return null;
   }
 }
 

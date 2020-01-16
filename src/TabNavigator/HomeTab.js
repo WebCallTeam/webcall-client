@@ -4,6 +4,7 @@ import { Icon } from "native-base";
 
 import { BarCodeScanner } from "expo-barcode-scanner";
 import * as Permissions from "expo-permissions";
+import { NavigationEvents } from "react-navigation";
 
 export default class HomeTab extends Component {
   static navigationOptions = {
@@ -14,7 +15,8 @@ export default class HomeTab extends Component {
 
   state = {
     hasCameraPermission: null,
-    scanned: false
+    scanned: false,
+    isFocused: true
   };
 
   async componentDidMount() {
@@ -28,7 +30,6 @@ export default class HomeTab extends Component {
 
   render() {
     const { hasCameraPermission, scanned } = this.state;
-
     if (hasCameraPermission === null) {
       return <Text>Requesting for camera permission</Text>;
     }
@@ -44,10 +45,16 @@ export default class HomeTab extends Component {
         }}
       >
         <View style={{ height: 30 }} />
-        <BarCodeScanner
-          onBarCodeScanned={scanned ? undefined : this.handleBarCodeScanned}
-          style={{ flex: 1 }}
+        <NavigationEvents
+          onDidFocus={() => this.setState({ isFocused: true })}
+          onDidBlur={() => this.setState({ isFocused: false })}
         />
+        {this.state.isFocused ? (
+          <BarCodeScanner
+            onBarCodeScanned={scanned ? undefined : this.handleBarCodeScanned}
+            style={{ flex: 1 }}
+          />
+        ) : null}
 
         {scanned && (
           <Button
