@@ -100,8 +100,9 @@ class LoginScreen extends Component {
       this.nameChange("");
 
       // set it for owner id
-      // AsyncStorage.setItem("userID", responseJson.id);
-      // this.setState({ id: responseJson.id });
+      AsyncStorage.setItem("userName", userInfo.name);
+      AsyncStorage.setItem("userID", responseJson.id);
+      this.setState({ id: responseJson.id });
 
       return this.props.navigation.navigate("Loading");
     } catch (err) {

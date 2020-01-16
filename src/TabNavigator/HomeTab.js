@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, StyleSheet, Button } from "react-native";
+import { Text, View, StyleSheet, Button, AsyncStorage } from "react-native";
 import { Icon } from "native-base";
 
 import { BarCodeScanner } from "expo-barcode-scanner";
@@ -60,8 +60,65 @@ export default class HomeTab extends Component {
     );
   }
 
+  // send order information to owner
   handleBarCodeScanned = ({ type, data }) => {
     this.setState({ scanned: true });
-    alert(`${data}가 스캔되었습니다!`);
+
+
+    let userName = AsyncStorage.getItem("userName");
+    let token = AsyncStorage.getItem("token");
+
+    try {
+      let response = await fetch(data, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name: userName,
+          expo_token: token
+        })
+      });
+
+
+      return this.props.navigation.navigate("HomeTab");
+    } catch (err) {
+      console.log(err);
+    }
+
+   
   };
+
+  sendNewOrder = (endpoint) => {
+
+    let userName = AsyncStorage.getItem("userName");
+    let userToken = AsyncStorage.getItem("userToken");
+
+    try {
+      let response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name: userName,
+          expo_token: userToken
+        })
+      });
+
+      let responseJson = await response.json();
+
+      this.nameChange("");
+
+      // set it for owner id
+      // AsyncStorage.setItem("userID", responseJson.id);
+      // this.setState({ id: responseJson.id });
+
+      return this.props.navigation.navigate("Loading");
+    } catch (err) {
+      console.log(err);
+    }
+  }
 }
