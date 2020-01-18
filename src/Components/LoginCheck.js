@@ -29,7 +29,7 @@ class LoginCheck extends React.Component {
     const { userInfo } = await this.props;
 
     userInfo.setNotification(value);
-    userInfo.addNotification(value);
+    // userInfo.addNotification(value);
 
     const oldOrderData = await AsyncStorage.getItem("orderData");
 
@@ -39,6 +39,7 @@ class LoginCheck extends React.Component {
     }
     newOrderData.push(value);
 
+    userInfo.setOrderList(newOrderData);
     await AsyncStorage.setItem("orderData", JSON.stringify(newOrderData))
       .then(() => {
         console.log("Save Complete!");

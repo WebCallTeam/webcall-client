@@ -61,9 +61,8 @@ export default class HomeTab extends Component {
   }
 
   // send order information to owner
-  handleBarCodeScanned = ({ type, data }) => {
+  handleBarCodeScanned = async ({ type, data }) => {
     this.setState({ scanned: true });
-
 
     let userName = AsyncStorage.getItem("userName");
     let token = AsyncStorage.getItem("token");
@@ -81,17 +80,13 @@ export default class HomeTab extends Component {
         })
       });
 
-
       return this.props.navigation.navigate("HomeTab");
     } catch (err) {
       console.log(err);
     }
-
-   
   };
 
-  sendNewOrder = (endpoint) => {
-
+  sendNewOrder = async endpoint => {
     let userName = AsyncStorage.getItem("userName");
     let userToken = AsyncStorage.getItem("userToken");
 
@@ -120,5 +115,5 @@ export default class HomeTab extends Component {
     } catch (err) {
       console.log(err);
     }
-  }
+  };
 }

@@ -1,6 +1,7 @@
 import { action, observable } from "mobx";
 
 export default class UserInfo {
+  @observable id = "";
   @observable name = "";
   @observable password = "";
   @observable notification = {
@@ -12,6 +13,10 @@ export default class UserInfo {
   @observable orderList = [];
 
   @observable testText = "가입";
+
+  @action setId(id) {
+    this.id = id;
+  }
 
   @action setName(name) {
     this.name = name;

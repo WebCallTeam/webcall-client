@@ -11,7 +11,8 @@ import { userInfo, orderInfo } from "../store";
 import Dialog from "react-native-dialog";
 
 const PUSH_ENDPOINT = "https://webcall-dbserver.herokuapp.com/owner/1";
-const MANAGER_TO_CLIENT = "https://webcall-dbserver.herokuapp.com/client/";
+const MANAGER_TO_CALLCUSTOMER =
+  "https://webcall-dbserver.herokuapp.com/callcustomer/";
 
 class OrderBox extends Component {
   constructor(props) {
@@ -54,21 +55,31 @@ class OrderBox extends Component {
     }
   };
 
-  deleteList = value => {
-    this.props.unMount();
+  deleteList = async () => {
+    userInfo.orderList.splice(this.props.arrayIndex, 1);
+    await AsyncStorage.setItem("orderData", JSON.stringify(userInfo.orderList));
   };
-
   handleOrderData = async () => {
     this.setState({ orderData: this.state.tmpOrder });
-    this.setState({ dialogVisible: false });
+    // this.setState({ dialogVisible: false });
+    //const { userInfo } = this.props;
 
-    const { userInfo } = this.props;
+    //testing datas
+    // let rawData = await AsyncStorage.getItem("orderData");
+    // let rawData2 = await userInfo.notification;
+    // let rawData3 = await userInfo.orderList;
+    // let orderData = JSON.parse(rawData);
+    //alert(this.props.arrayIndex);
+    //alert(Object.values(rawData2.data));
+    //alert(rawData3.length);
 
     try {
       // token data from mobx
-      let token = await userInfo.orderList[userInfo.index].data.token;
+      // https://reactjs.org/docs/lists-and-keys.html why use arrayKey instead of key
+      //let token = await userInfo.orderList[this.props.arrayKey].data.token;
 
-      let response = await fetch(MANAGER_TO_CLIENT, {
+      //alert(token);
+      let response = await fetch(MANAGER_TO_CALLCUSTOMER, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -79,13 +90,8 @@ class OrderBox extends Component {
           expo_token: token
         })
       });
-
-      let responseJson = await response.json();
-
-      //console.log(responseJson);
-      this.nameChange("");
-      return this.props.navigation.navigate("Loading");
     } catch (err) {
+      //alert(err);
       console.log(err);
     }
   };
@@ -109,7 +115,9 @@ class OrderBox extends Component {
     return (
       <View style={styles.elem}>
         <View style={styles.userInf}>
-          <Text style={styles.name}>{this.state.name + "님의 주문"}</Text>
+          <Text style={styles.name}>
+            {userInfo.orderList[this.props.arrayIndex].data.name + "님의 주문"}
+          </Text>
           <Text style={styles.name}>
             {this.state.orderData
               ? this.state.orderData + " 번 주문"

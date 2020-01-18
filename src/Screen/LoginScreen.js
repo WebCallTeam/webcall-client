@@ -51,7 +51,7 @@ class LoginScreen extends Component {
   };
 
   registerForPushNotificationsAsync = async () => {
-    setTimeout(() => {}, 1000);
+    setTimeout(() => {}, 5000);
     const { status: existingStatus } = await Permissions.getAsync(
       Permissions.NOTIFICATIONS
     );
@@ -71,40 +71,55 @@ class LoginScreen extends Component {
       return;
     }
 
-    // Get the token that uniquely identifies this device
-    let token = await Notifications.getExpoPushTokenAsync();
-    // testing local
-    //let token = "this is a local token";
-    AsyncStorage.setItem("userToken", token);
+    let tokenValue = await AsyncStorage.getItem("userToken");
+    let requestMethod = "";
+    //let tokenValue = "ExponentPushToken[EF0j3iAyND7CcI7ujOqveo]";
+    if (tokenValue == null) {
+      // Get the token that uniquely identifies this device
+      let token = await Notifications.getExpoPushTokenAsync();
+
+      //let token = "this is a local token";
+
+      AsyncStorage.setItem("userToken", token);
+      tokenValue = token;
+      requestMethod = "POST";
+    } else {
+      requestMethod = "PUT";
+    }
 
     const { userInfo } = await this.props;
 
     // check if customer or manager
-    let PUSH_ENDPOINT = this.state.check ? MANAGER_ENDPOINT : CUSTOMER_ENDPOINT;
 
+    let PUSH_ENDPOINT = this.state.check ? MANAGER_ENDPOINT : CUSTOMER_ENDPOINT;
+    //let PUSH_ENDPOINT = CUSTOMER_ENDPOINT;
+    // set it for owner id
+    await AsyncStorage.setItem("userName", userInfo.name);
+
+    //alert(userInfo.name + " /// " + tokenValue);
     try {
-      let response = await fetch(PUSH_ENDPOINT, {
-        method: "POST",
+      let responseData = "";
+      await fetch(PUSH_ENDPOINT, {
+        method: requestMethod,
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
           name: userInfo.name,
-          expo_token: token
+          expo_token: tokenValue
         })
       });
 
-      let responseJson = await response.json();
+      await AsyncStorage.setItem("userName", userInfo.name);
 
+      let nameValue = await AsyncStorage.getItem("userName");
+      alert(nameValue);
+
+      // erase information
       this.nameChange("");
 
-      // set it for owner id
-      AsyncStorage.setItem("userName", userInfo.name);
-      AsyncStorage.setItem("userID", responseJson.id);
-      this.setState({ id: responseJson.id });
-
-      return this.props.navigation.navigate("Loading");
+      return this.props.navigation.navigate("HomeTab");
     } catch (err) {
       console.log(err);
     }
@@ -128,13 +143,17 @@ class LoginScreen extends Component {
   render() {
     const { userInfo } = this.props;
     //const { name } = this.state;
+    // let unknownValue = Object.values(AsyncStorage.getItem("userToken"));
+    // let tokenValue = AsyncStorage.getItem("userToken");
 
+    // alert(unknownValue);
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <KeyboardAvoidingView style={styles.container} behavior="padding">
           <View style={styles.titleArea}>
             <Text style={styles.title}>WEBCALL</Text>
           </View>
+          <TextInput value={typeof userInfo.id}></TextInput>
           <View style={styles.formArea}>
             <TextInput
               style={styles.textForm}
@@ -173,7 +192,7 @@ class LoginScreen extends Component {
               style={styles.button}
               onPress={this.registerForPushNotificationsAsync}
             >
-              <Text style={styles.buttonTitle}>login</Text>
+              <Text style={styles.buttonTitle}>Login</Text>
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>

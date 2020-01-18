@@ -18,6 +18,8 @@ class OrderListTab extends Component {
     this.dataList = [];
     // this.state = { datas: datas }
     this.removeOrderBox = this.removeOrderBox.bind(this);
+
+    this.getOrderData();
   }
 
   static navigationOptions = {
@@ -27,15 +29,13 @@ class OrderListTab extends Component {
   };
 
   // AsyncStorage를 이용한 데이터 가져오기
-  getOrderData = () => {
-    const orderData = AsyncStorage.getItem("orderData");
+  getOrderData = async () => {
+    let rawData = await AsyncStorage.getItem("orderData");
+    const { userInfo } = this.props;
 
-    let orderDataList = JSON.parse(orderData);
-    if (!orderDataList) {
-      orderDataList = [];
-    }
+    let orderData = JSON.parse(rawData);
 
-    return orderDataList;
+    userInfo.setOrderList(orderData);
   };
 
   state = {
@@ -61,7 +61,7 @@ class OrderListTab extends Component {
           {userInfo.orderList.map((value, index) => {
             return this.state.status != 3 ? (
               <OrderBox
-                value={value}
+                arrayIndex={index}
                 key={index}
                 unMount={this.removeOrderBox}
               />
