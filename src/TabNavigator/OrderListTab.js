@@ -19,6 +19,7 @@ class OrderListTab extends Component {
     // this.state = { datas: datas }
     this.removeOrderBox = this.removeOrderBox.bind(this);
 
+    // 초기화 시 데이터 가져오기
     this.getOrderData();
   }
 

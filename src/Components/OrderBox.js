@@ -60,7 +60,8 @@ class OrderBox extends Component {
     await AsyncStorage.setItem("orderData", JSON.stringify(userInfo.orderList));
   };
   handleOrderData = async () => {
-    this.setState({ orderData: this.state.tmpOrder });
+    // alert(userInfo.orderList[this.props.arrayIndex].data.number);
+    //this.setState({ orderData: this.state.tmpOrder });
     // this.setState({ dialogVisible: false });
     //const { userInfo } = this.props;
 
@@ -73,6 +74,7 @@ class OrderBox extends Component {
     //alert(Object.values(rawData2.data));
     //alert(rawData3.length);
 
+    //alert();
     try {
       // token data from mobx
       // https://reactjs.org/docs/lists-and-keys.html why use arrayKey instead of key
@@ -86,7 +88,7 @@ class OrderBox extends Component {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          number: this.state.tmpOrder,
+          number: userInfo.orderList[this.props.arrayIndex].data.number,
           expo_token: token
         })
       });
@@ -96,10 +98,9 @@ class OrderBox extends Component {
     }
   };
 
-  handelDialog(data) {
-    this.setState({
-      tmpOrder: data.nativeEvent.text
-    });
+  handleDialog(data, index) {
+    // this.setState({ tmpOrder: data });
+    userInfo.setOrderNumber(data.nativeEvent.text, index);
   }
 
   openDialog = () => {
@@ -119,8 +120,9 @@ class OrderBox extends Component {
             {userInfo.orderList[this.props.arrayIndex].data.name + "님의 주문"}
           </Text>
           <Text style={styles.name}>
-            {this.state.orderData
-              ? this.state.orderData + " 번 주문"
+            {userInfo.orderList[this.props.arrayIndex]
+              ? userInfo.orderList[this.props.arrayIndex].data.number +
+                " 번 주문"
               : "주문 번호를 지정해주세요"}
           </Text>
         </View>
@@ -149,8 +151,8 @@ class OrderBox extends Component {
           <Dialog.Title>주문 번호 할당</Dialog.Title>
           <Dialog.Description>해당주문의 번호를 입력하세요</Dialog.Description>
           <Dialog.Input
-            value={this.state.tmpOrder}
-            onChange={tmpOrder => this.handelDialog(tmpOrder)}
+            value={userInfo.orderList[this.props.arrayIndex].data.number}
+            onChange={data => this.handleDialog(data, this.props.arrayIndex)}
           ></Dialog.Input>
           <Dialog.Button label="취소" onPress={this.onCancel} />
           <Dialog.Button label="할당" onPress={() => this.handleOrderData()} />

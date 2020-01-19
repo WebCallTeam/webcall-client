@@ -38,6 +38,10 @@ export default class UserInfo {
     this.orderList = Array.from(notificationArray);
   }
 
+  @action setOrderNumber(data, index) {
+    this.orderList[index].data.number = data;
+  }
+
   @action addNotification(notification) {
     this.orderList.push(notification);
   }
