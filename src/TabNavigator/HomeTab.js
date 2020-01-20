@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { Icon } from "native-base";
-import QRScan from "../Components/QRScan";
+import { QRScan, QRMake } from "../Components/";
 import { NavigationEvents } from "react-navigation";
 import {
   widthPercentageToDP as wp,
@@ -14,7 +14,6 @@ export default class HomeTab extends Component {
       <Icon name="ios-home" style={{ color: tintColor }} />
     )
   };
-
   state = {
     StartQR: false
   };

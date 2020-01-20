@@ -1,7 +1,7 @@
 import { createSwitchNavigator, createAppContainer } from "react-navigation";
 import { createMaterialTopTabNavigator } from "react-navigation-tabs";
 import React, { Component } from "react";
-import LoginCheck from "./src/Components/LoginCheck";
+import LoginCheck from "./src/Components/";
 import { LoginScreen } from "./src/Screen";
 import { HomeTab, OrderListTab, ProfileTab } from "./src/TabNavigator";
 import { Provider } from "mobx-react";

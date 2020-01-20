@@ -8,7 +8,7 @@ import {
   ScrollView
 } from "react-native";
 import { Icon } from "native-base";
-import OrderBox from "../Components/OrderBox";
+import OrderBox from "../Components/";
 import { inject, observer } from "mobx-react";
 import { userInfo } from "../store";
 
