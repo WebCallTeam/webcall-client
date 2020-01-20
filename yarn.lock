@@ -1088,13 +1088,6 @@
     wcwidth "^1.0.1"
     ws "^1.1.0"
 
-"@react-native-seoul/naver-login@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@react-native-seoul/naver-login/-/naver-login-2.0.0.tgz#9f4427f0a8b476889c4dfd4ae55b7a428d32fa7c"
-  integrity sha512-dhRmQLngqionHCOIWHQRy7/g8uxk/tDS/VvGFKIOXnKyB1LCHD6gULehBgUqfjRcbmWis/NaZtpgGiUn6kC3dA==
-  dependencies:
-    dooboolab-welcome "^1.1.1"
-
 "@react-navigation/core@^3.5.1":
   version "3.5.1"
   resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-3.5.1.tgz#7a2339fca3496979305fb3a8ab88c2ca8d8c214d"
@@ -2187,11 +2180,6 @@ destroy@~1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/destroy/-/destroy-1.0.4.tgz#978857442c44749e4206613e37946205826abd80"
   integrity sha1-l4hXRCxEdJ5CBmE+N5RiBYJqvYA=
-
-dooboolab-welcome@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/dooboolab-welcome/-/dooboolab-welcome-1.1.1.tgz#ca2184f6e1f568865d707a6ce3bda7e003550f54"
-  integrity sha512-tQ/9NBCGnalHwKOBjDqTD4t4wQpDfSSbxQGctzkzaLHR3AhN0wCBkIs05JciVtvl/jfLZ+DgAndktAMk3Bu7Vw==
 
 ee-first@1.1.1:
   version "1.1.1"

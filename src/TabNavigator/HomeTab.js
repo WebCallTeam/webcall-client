@@ -1,9 +1,7 @@
 import React, { Component } from "react";
 import { Text, View, StyleSheet, Button } from "react-native";
 import { Icon } from "native-base";
-
-import { BarCodeScanner } from "expo-barcode-scanner";
-import * as Permissions from "expo-permissions";
+import QRScan from "../Components/QRScan";
 import { NavigationEvents } from "react-navigation";
 
 export default class HomeTab extends Component {
@@ -14,61 +12,40 @@ export default class HomeTab extends Component {
   };
 
   state = {
-    hasCameraPermission: null,
-    scanned: false,
-    isFocused: true
-  };
-
-  async componentDidMount() {
-    this.getPermissionsAsync();
-  }
-
-  getPermissionsAsync = async () => {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA);
-    this.setState({ hasCameraPermission: status === "granted" });
+    StartQR: false
   };
 
   render() {
-    const { hasCameraPermission, scanned } = this.state;
-    if (hasCameraPermission === null) {
-      return <Text>Requesting for camera permission</Text>;
-    }
-    if (hasCameraPermission === false) {
-      return <Text>No access to camera</Text>;
-    }
+    //return this.props.isFocused ? <QRScan /> : null;
     return (
-      <View
-        style={{
-          flex: 1,
-          flexDirection: "column",
-          justifyContent: "flex-end"
-        }}
-      >
-        <View style={{ height: 30 }} />
+      <View style={{ flex: 1 }}>
         <NavigationEvents
-          onDidFocus={() => this.setState({ isFocused: true })}
-          onDidBlur={() => this.setState({ isFocused: false })}
+          onWillBlur={() => this.setState({ StartQR: false })}
         />
-        {this.state.isFocused ? (
-          <BarCodeScanner
-            onBarCodeScanned={scanned ? undefined : this.handleBarCodeScanned}
-            style={{ flex: 1 }}
-          />
-        ) : null}
-
-        {scanned && (
-          <Button
-            title={"재시도"}
-            onPress={() => this.setState({ scanned: false })}
-          />
+        {this.state.StartQR ? (
+          <View style={{ flex: 1 }}>
+            <View style={{ height: 30 }} />
+            <QRScan />
+            <View style={{ height: 30 }} />
+          </View>
+        ) : (
+          <View
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          >
+            <View style={{ height: 30 }} />
+            <Button
+              style={{
+                height: "50%",
+                justifyContent: "center",
+                alignItems: "center"
+              }}
+              title={"QR코드인식"}
+              onPress={() => this.setState({ StartQR: true })}
+            />
+            <View style={{ height: 30 }} />
+          </View>
         )}
-        <View style={{ height: 30 }} />
       </View>
     );
   }
-
-  handleBarCodeScanned = ({ type, data }) => {
-    this.setState({ scanned: true });
-    alert(`${data}가 스캔되었습니다!`);
-  };
 }

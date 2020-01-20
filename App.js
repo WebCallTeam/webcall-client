@@ -21,7 +21,6 @@ const AppContainer = createAppContainer(
           ProfileTab: { screen: ProfileTab }
         },
         {
-          //userInfo.check? initialRouteName: "HomeTab":initialRouteName: "OrderListTab",
           animationEnabled: true,
           lazy: true,
           swipeEnabled: true,
@@ -64,7 +63,7 @@ async function getNotificationAsync() {
   // }
 }
 
-class App extends Component {
+export default class App extends Component {
   componentDidMount() {
     getNotificationAsync();
   }
@@ -77,5 +76,3 @@ class App extends Component {
     );
   }
 }
-
-export default App;

@@ -11,11 +11,6 @@ import {
   heightPercentageToDP as hp
 } from "react-native-responsive-screen";
 import { Icon } from "native-base";
-import {
-  SwitchActions,
-  NavigationActions,
-  StackActions
-} from "react-navigation";
 
 export default class ProfileTab extends Component {
   static navigationOptions = {

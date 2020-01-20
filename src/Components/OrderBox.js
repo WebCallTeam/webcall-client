@@ -4,7 +4,8 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  AsyncStorage
+  AsyncStorage,
+  Platform
 } from "react-native";
 import { inject, observer } from "mobx-react";
 import { userInfo, orderInfo } from "../store";
@@ -64,7 +65,7 @@ class OrderBox extends Component {
 
   handelDialog(data) {
     this.setState({
-      tmpOrder: data.nativeEvent.text
+      tmpOrder: data.nativeEvent.text.replace(/[^0-9]/g, "")
     });
   }
 
@@ -115,11 +116,20 @@ class OrderBox extends Component {
             <Dialog.Description>
               해당주문의 번호를 입력하세요
             </Dialog.Description>
-            <Dialog.Input
-              value={this.state.tmpOrder}
-              onChange={tmpOrder => this.handelDialog(tmpOrder)}
-              wrapperStyle={{ color: "black" }}
-            ></Dialog.Input>
+            {Platform.OS === "ios" ? (
+              <Dialog.Input
+                value={this.state.tmpOrder}
+                onChange={tmpOrder => this.handelDialog(tmpOrder)}
+                keyboardType={"numeric"}
+                color="black"
+              />
+            ) : (
+              <Dialog.Input
+                value={this.state.tmpOrder}
+                onChange={tmpOrder => this.handelDialog(tmpOrder)}
+                keyboardType={"numeric"}
+              />
+            )}
             <Dialog.Button label="취소" onPress={this.onCancel} />
             <Dialog.Button
               label="할당"
