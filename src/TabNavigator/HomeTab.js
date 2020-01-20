@@ -65,7 +65,7 @@ export default class HomeTab extends Component {
     this.setState({ scanned: true });
 
     let userName = AsyncStorage.getItem("userName");
-    let token = AsyncStorage.getItem("token");
+    let token = AsyncStorage.getItem("userToken");
 
     try {
       let response = await fetch(data, {

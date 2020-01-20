@@ -74,13 +74,12 @@ class OrderBox extends Component {
     //alert(Object.values(rawData2.data));
     //alert(rawData3.length);
 
-    //alert();
+    alert(userInfo.id);
     try {
       // token data from mobx
       // https://reactjs.org/docs/lists-and-keys.html why use arrayKey instead of key
       //let token = await userInfo.orderList[this.props.arrayKey].data.token;
 
-      //alert(token);
       let response = await fetch(MANAGER_TO_CALLCUSTOMER, {
         method: "POST",
         headers: {
@@ -93,7 +92,6 @@ class OrderBox extends Component {
         })
       });
     } catch (err) {
-      //alert(err);
       console.log(err);
     }
   };

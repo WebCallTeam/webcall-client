@@ -12,7 +12,7 @@ export default class UserInfo {
 
   @observable orderList = [];
 
-  @observable testText = "가입";
+  @observable isAdmin = false;
 
   @action setId(id) {
     this.id = id;
@@ -24,10 +24,6 @@ export default class UserInfo {
 
   @action setPassword(password) {
     this.password = password;
-  }
-
-  @action setText(Text) {
-    this.testText = Text;
   }
 
   @action setNotification(notification) {
@@ -48,5 +44,9 @@ export default class UserInfo {
 
   @action deleteNotification(value) {
     this.orderList.splice(value, 1);
+  }
+
+  @action toggleAdmin() {
+    this.isAdmin = !this.isAdmin;
   }
 }

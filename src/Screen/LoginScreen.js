@@ -23,6 +23,8 @@ import { inject, observer } from "mobx-react";
 import { userInfo } from "../store";
 import { Icon } from "native-base";
 
+const Axios = require("axios");
+
 const CUSTOMER_ENDPOINT =
   "https://webcall-dbserver.herokuapp.com/callcustomer/";
 const MANAGER_ENDPOINT = "https://webcall-dbserver.herokuapp.com/owner/";
@@ -73,6 +75,7 @@ class LoginScreen extends Component {
 
     let tokenValue = await AsyncStorage.getItem("userToken");
     let requestMethod = "";
+
     //let tokenValue = "ExponentPushToken[EF0j3iAyND7CcI7ujOqveo]";
     if (tokenValue == null) {
       // Get the token that uniquely identifies this device
@@ -91,15 +94,14 @@ class LoginScreen extends Component {
 
     // check if customer or manager
 
-    let PUSH_ENDPOINT = this.state.check ? MANAGER_ENDPOINT : CUSTOMER_ENDPOINT;
+    let PUSH_ENDPOINT = userInfo.isAdmin ? MANAGER_ENDPOINT : CUSTOMER_ENDPOINT;
     //let PUSH_ENDPOINT = CUSTOMER_ENDPOINT;
     // set it for owner id
     await AsyncStorage.setItem("userName", userInfo.name);
 
-    //alert(userInfo.name + " /// " + tokenValue);
     try {
-      let responseData = "";
-      await fetch(PUSH_ENDPOINT, {
+      // need to look into axios break point
+      let responseData = await fetch(PUSH_ENDPOINT, {
         method: requestMethod,
         headers: {
           Accept: "application/json",
@@ -109,16 +111,28 @@ class LoginScreen extends Component {
           name: userInfo.name,
           expo_token: tokenValue
         })
-      });
+      })
+        .then(res => res.json())
+        .then(responseJson => {
+          if (requestMethod == "POST") {
+            userInfo.setId(responseJson.id);
+          }
+        })
+        .catch(err => alert(err));
 
-      await AsyncStorage.setItem("userName", userInfo.name);
+      // if (requestMethod == "POST") {
+      //   // responseData comes in as object -> trying to access it by converting it
+      //   // AsyncStorage error use mobx and in Hometab-> set AsyncStorage data with mobx
+      //   userInfo.setId(Object.values(responseData)[0]);
+      // }
 
-      let nameValue = await AsyncStorage.getItem("userName");
-      alert(nameValue);
+      // callback error with these two functions
+      // await AsyncStorage.setItem("userId", userInfo.id);
+      // await AsyncStorage.setItem("userName", userInfo.name);
 
       // erase information
       this.nameChange("");
-
+      alert(userInfo.id);
       return this.props.navigation.navigate("HomeTab");
     } catch (err) {
       console.log(err);
@@ -140,6 +154,12 @@ class LoginScreen extends Component {
     this.setState({ notification });
   };
 
+  toggleAdmin = () => {
+    let { userInfo } = this.props;
+
+    userInfo.toggleAdmin();
+  };
+
   render() {
     const { userInfo } = this.props;
     //const { name } = this.state;
@@ -153,7 +173,6 @@ class LoginScreen extends Component {
           <View style={styles.titleArea}>
             <Text style={styles.title}>WEBCALL</Text>
           </View>
-          <TextInput value={typeof userInfo.id}></TextInput>
           <View style={styles.formArea}>
             <TextInput
               style={styles.textForm}
@@ -170,17 +189,13 @@ class LoginScreen extends Component {
             >
               {Platform.OS === "ios" ? (
                 <Switch
-                  value={this.state.check}
-                  onValueChange={() =>
-                    this.setState({ check: !this.state.check })
-                  }
+                  value={userInfo.isAdmin}
+                  onValueChange={this.toggleAdmin}
                 />
               ) : (
                 <CheckBox
-                  value={this.state.check}
-                  onValueChange={() =>
-                    this.setState({ check: !this.state.check })
-                  }
+                  value={userInfo.isAdmin}
+                  onValueChange={this.toggleAdmin}
                 />
               )}
 
