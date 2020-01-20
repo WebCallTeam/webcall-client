@@ -1,8 +1,12 @@
 import React, { Component } from "react";
-import { Text, View, StyleSheet, Button } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { Icon } from "native-base";
 import QRScan from "../Components/QRScan";
 import { NavigationEvents } from "react-navigation";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp
+} from "react-native-responsive-screen";
 
 export default class HomeTab extends Component {
   static navigationOptions = {
@@ -16,7 +20,6 @@ export default class HomeTab extends Component {
   };
 
   render() {
-    //return this.props.isFocused ? <QRScan /> : null;
     return (
       <View style={{ flex: 1 }}>
         <NavigationEvents
@@ -30,18 +33,24 @@ export default class HomeTab extends Component {
           </View>
         ) : (
           <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            style={{
+              width: "100%",
+              height: hp("5%")
+            }}
           >
             <View style={{ height: 30 }} />
-            <Button
+            <TouchableOpacity
               style={{
-                height: "50%",
+                backgroundColor: "#46c3ad",
+                width: "100%",
+                height: "100%",
                 justifyContent: "center",
                 alignItems: "center"
               }}
-              title={"QR코드인식"}
               onPress={() => this.setState({ StartQR: true })}
-            />
+            >
+              <Text style={{ color: "white" }}>QR코드인식</Text>
+            </TouchableOpacity>
             <View style={{ height: 30 }} />
           </View>
         )}
