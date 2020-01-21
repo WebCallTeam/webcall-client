@@ -35,6 +35,14 @@ export default class UserInfo {
     this.notification = notification;
   }
 
+  @action initNotification(notification) {
+    this.notification = {
+      origin: "current nothing",
+      data: { target: "no data" },
+      remote: true
+    };
+  }
+
   @action setOrderList(notificationArray) {
     this.orderList = Array.from(notificationArray);
   }
