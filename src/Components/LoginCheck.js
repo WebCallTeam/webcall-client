@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { inject, observer } from "mobx-react";
 import { Notifications } from "expo";
+import { userInfo } from "../store";
 
 class LoginCheck extends React.Component {
   componentDidMount() {
@@ -16,6 +17,8 @@ class LoginCheck extends React.Component {
     this.notificationSubscription = Notifications.addListener(
       this.handleNotification
     );
+
+    this.initializeInfo();
   }
 
   _bootstrapAsync = async () => {
@@ -23,6 +26,20 @@ class LoginCheck extends React.Component {
 
     this.props.navigation.navigate(userToken ? "App" : "Auth");
     //this.props.navigation.navigate("Auth");
+  };
+
+  initializeInfo = async () => {
+    let idInfo = await AsyncStorage.getItem("userId");
+    let nameInfo = await AsyncStorage.getItem("userName");
+    let tokenInfo = await AsyncStorage.getItem("userToken");
+
+    let adminInfo = await AsyncStorage.getItem("userAdmin");
+
+    adminInfo == "true" ? userInfo.setAdmin(true) : userInfo.setAdmin(false);
+
+    userInfo.setName(nameInfo);
+    userInfo.setId(idInfo);
+    userInfo.setToken(tokenInfo);
   };
 
   handleNotification = async value => {

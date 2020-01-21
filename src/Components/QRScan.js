@@ -1,9 +1,13 @@
 import React, { Component } from "react";
-import { Text, View, StyleSheet, Button } from "react-native";
+import { Text, View, StyleSheet, Button, AsyncStorage } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import * as Permissions from "expo-permissions";
+import { inject, observer } from "mobx-react";
+import { userInfo } from "../store";
+const CUSTOMER_ORDER_PUSH_POINT =
+  "https://webcall-dbserver.herokuapp.com/owner/";
 
-export default class QRScan extends Component {
+class QRScan extends Component {
   state = {
     hasCameraPermission: null,
     scanned: false
@@ -49,9 +53,40 @@ export default class QRScan extends Component {
     );
   }
 
-  handleBarCodeScanned = ({ type, data }) => {
+  handleBarCodeScanned = async ({ type, data }) => {
     this.setState({ scanned: true });
-    alert(`${data}가 스캔되었습니다!`);
+
+    let { userInfo } = await this.props;
+
+    if (!userInfo.name) {
+      let nameValue = await AsyncStorage.getItem("userName");
+      userInfo.setName(nameValue);
+    }
+
+    if (!userInfo.token) {
+      let tokenValue = await AsyncStorage.getItem("userToken");
+      userInfo.setToken(tokenValue);
+    }
+
+    try {
+      let response = await fetch(CUSTOMER_ORDER_PUSH_POINT + data, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name: userInfo.name,
+          expo_token: userInfo.token
+        })
+      }).then(alert("주문을 등록하셨습니다."));
+
+      //확인 로직
+      // let responseJson = await response.json();
+      // console.log(responseJson);
+    } catch (err) {
+      console.log(err);
+    }
   };
 }
 
@@ -67,3 +102,5 @@ const styles = StyleSheet.create({
     padding: 0
   }
 });
+
+export default inject("userInfo")(observer(QRScan));

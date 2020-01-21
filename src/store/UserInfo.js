@@ -54,4 +54,8 @@ export default class UserInfo {
   @action toggleAdmin() {
     this.isAdmin = !this.isAdmin;
   }
+
+  @action setAdmin(boolValue) {
+    this.isAdmin = boolValue;
+  }
 }

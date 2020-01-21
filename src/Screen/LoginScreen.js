@@ -82,7 +82,10 @@ class LoginScreen extends Component {
     //let tokenValue = "ExponentPushToken[EF0j3iAyND7CcI7ujOqveo]";
 
     let PUSH_ENDPOINT = userInfo.isAdmin ? MANAGER_ENDPOINT : CUSTOMER_ENDPOINT;
-
+    await AsyncStorage.setItem(
+      "userAdmin",
+      userInfo.isAdmin ? "true" : "false"
+    );
     // owner update X
     if (userInfo.token === null) {
       // Get the token that uniquely identifies this device

@@ -11,9 +11,11 @@ import { inject, observer } from "mobx-react";
 import { userInfo, orderInfo } from "../store";
 import Dialog from "react-native-dialog";
 
-const PUSH_ENDPOINT = "https://webcall-dbserver.herokuapp.com/owner/1";
-const MANAGER_TO_CALLCUSTOMER =
-  "https://webcall-dbserver.herokuapp.com/callcustomer/";
+const ORDER_COMPLETE_PUSH_POINT =
+  "https://webcall-dbserver.herokuapp.com/orderComplete/";
+const CONFIRM_NUMBER_PUSH_POINT =
+  "https://webcall-dbserver.herokuapp.com/orderConfirmed/";
+//const CONFIRM_NUMBER_PUSH_POINT = "https://192.168.0.4/3000/orderConfirmed/";
 
 class OrderBox extends Component {
   constructor(props) {
@@ -35,15 +37,17 @@ class OrderBox extends Component {
     // 점장의 경우기 때문에
     // 점장이 가지고 있는 리스트에 저장되 있는 token 정보를 읽어오는 로직
     const { userInfo } = await this.props;
+    let token = await userInfo.orderList[this.props.arrayIndex].data.token;
+
     try {
-      let response = await fetch(PUSH_ENDPOINT + userInfo.id, {
+      let response = await fetch(ORDER_COMPLETE_PUSH_POINT, {
         method: "POST",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          number: this.state.orderData,
+          number: userInfo.orderList[this.props.arrayIndex].data.number,
           expo_token: token
         })
       });
@@ -66,7 +70,7 @@ class OrderBox extends Component {
       // https://reactjs.org/docs/lists-and-keys.html why use arrayKey instead of key
       let token = await userInfo.orderList[this.props.arrayIndex].data.token;
 
-      let response = await fetch(MANAGER_TO_CALLCUSTOMER, {
+      let response = await fetch(CONFIRM_NUMBER_PUSH_POINT, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -95,6 +99,7 @@ class OrderBox extends Component {
   };
 
   onCancel = () => {
+    userInfo.orderList[this.props.arrayIndex].data.number = 0;
     this.setState({ dialogVisible: false });
   };
 
@@ -114,10 +119,10 @@ class OrderBox extends Component {
           {console.log(!userInfo.orderList[this.props.arrayIndex].data.number)}
         </View>
         <View style={styles.userComment}>
-          {this.state.orderData ? (
+          {userInfo.orderList[this.props.arrayIndex].data.number ? (
             <TouchableOpacity
               style={styles.button}
-              onPress={this.callCustomerWhenDone}
+              onPress={() => this.callCustomerWhenDone()}
             >
               <Text>호출</Text>
             </TouchableOpacity>
@@ -139,7 +144,9 @@ class OrderBox extends Component {
           <Dialog.Description>해당주문의 번호를 입력하세요</Dialog.Description>
           {Platform.OS === "ios" ? (
             <Dialog.Input
-              value={userInfo.orderList[this.props.arrayIndex].data.number}
+              value={userInfo.orderList[
+                this.props.arrayIndex
+              ].data.number.toString()}
               onChange={data => this.handleDialog(data, this.props.arrayIndex)}
               keyboardType={"numeric"}
               color="black"
