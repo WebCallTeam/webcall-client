@@ -58,7 +58,7 @@ class LoginScreen extends Component {
 
   registerForPushNotificationsAsync = async () => {
     setTimeout(() => {}, 2000);
-    const { userInfo } = await this.props;
+    let { userInfo } = await this.props;
     const { status: existingStatus } = await Permissions.getAsync(
       Permissions.NOTIFICATIONS
     );
@@ -82,12 +82,22 @@ class LoginScreen extends Component {
     //let tokenValue = "ExponentPushToken[EF0j3iAyND7CcI7ujOqveo]";
 
     let PUSH_ENDPOINT = userInfo.isAdmin ? MANAGER_ENDPOINT : CUSTOMER_ENDPOINT;
+    let tokenValue = userInfo.token;
+
     await AsyncStorage.setItem(
       "userAdmin",
       userInfo.isAdmin ? "true" : "false"
     );
+
+    let token = await Notifications.getExpoPushTokenAsync();
+
+    await AsyncStorage.setItem("userToken", token);
+    userInfo.setToken(token);
+
+    requestMethod = "POST";
+
     // owner update X
-    if (userInfo.token === null) {
+    if (tokenValue === null) {
       // Get the token that uniquely identifies this device
       let token = await Notifications.getExpoPushTokenAsync();
 
@@ -103,7 +113,6 @@ class LoginScreen extends Component {
     //let PUSH_ENDPOINT = CUSTOMER_ENDPOINT;
     // set it for owner id
     await AsyncStorage.setItem("userName", userInfo.name);
-
     try {
       // need to look into axios break point
       let responseData = await fetch(PUSH_ENDPOINT, {
@@ -114,7 +123,7 @@ class LoginScreen extends Component {
         },
         body: JSON.stringify({
           name: userInfo.name,
-          expo_token: userInfo.token
+          expo_token: tokenValue
         })
       })
         .then(res => res.json())
@@ -125,12 +134,13 @@ class LoginScreen extends Component {
             idString = idString.replace("[", "").replace("]", "");
             AsyncStorage.setItem("userId", idString);
           }
-        })
-        .catch(err => alert(err));
+        });
+      // PUT 기능을 현재 사용하지 않기 때문에 일단 보류
+      //.catch(err => alert(err));
       // erase information
       this.nameChange("");
 
-      return this.props.navigation.navigate("HomeTab");
+      this.props.navigation.navigate("HomeTab");
     } catch (err) {
       console.log(err);
     }

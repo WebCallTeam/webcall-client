@@ -64,6 +64,8 @@ class LoginCheck extends React.Component {
       .catch(() => {
         console.log("There was an error saving the orderData");
       });
+
+    this.props.navigation.navigate(value.data.target);
   };
 
   render() {
