@@ -38,6 +38,7 @@ class LoginScreen extends Component {
     super(props);
 
     this.nameChange = this.nameChange.bind(this);
+    this.initialize();
   }
 
   state = {
@@ -52,8 +53,14 @@ class LoginScreen extends Component {
     headerTitleStyle: { alignSelf: "center", textAlign: "center", flex: 1 }
   };
 
+  initialize = async () => {
+    const { userInfo } = this.props;
+    userInfo.token = await AsyncStorage.getItem("userToken");
+  };
+
   registerForPushNotificationsAsync = async () => {
     setTimeout(() => {}, 5000);
+    const { userInfo } = await this.props;
     const { status: existingStatus } = await Permissions.getAsync(
       Permissions.NOTIFICATIONS
     );
@@ -73,28 +80,25 @@ class LoginScreen extends Component {
       return;
     }
 
-    let tokenValue = await AsyncStorage.getItem("userToken");
     let requestMethod = "";
-
     //let tokenValue = "ExponentPushToken[EF0j3iAyND7CcI7ujOqveo]";
-    if (tokenValue == null) {
+
+    let PUSH_ENDPOINT = userInfo.isAdmin ? MANAGER_ENDPOINT : CUSTOMER_ENDPOINT;
+
+    // owner update X
+    if (userInfo.token === null) {
       // Get the token that uniquely identifies this device
       let token = await Notifications.getExpoPushTokenAsync();
 
-      //let token = "this is a local token";
+      await AsyncStorage.setItem("userToken", token);
+      userInfo.setToken(token);
 
-      AsyncStorage.setItem("userToken", token);
-      tokenValue = token;
       requestMethod = "POST";
     } else {
       requestMethod = "PUT";
     }
-
-    const { userInfo } = await this.props;
-
     // check if customer or manager
 
-    let PUSH_ENDPOINT = userInfo.isAdmin ? MANAGER_ENDPOINT : CUSTOMER_ENDPOINT;
     //let PUSH_ENDPOINT = CUSTOMER_ENDPOINT;
     // set it for owner id
     await AsyncStorage.setItem("userName", userInfo.name);
@@ -109,30 +113,22 @@ class LoginScreen extends Component {
         },
         body: JSON.stringify({
           name: userInfo.name,
-          expo_token: tokenValue
+          expo_token: userInfo.token
         })
       })
         .then(res => res.json())
         .then(responseJson => {
           if (requestMethod == "POST") {
             userInfo.setId(responseJson.id);
+            let idString = JSON.stringify(responseJson.id);
+            idString = idString.replace("[", "").replace("]", "");
+            AsyncStorage.setItem("userId", idString);
           }
         })
         .catch(err => alert(err));
-
-      // if (requestMethod == "POST") {
-      //   // responseData comes in as object -> trying to access it by converting it
-      //   // AsyncStorage error use mobx and in Hometab-> set AsyncStorage data with mobx
-      //   userInfo.setId(Object.values(responseData)[0]);
-      // }
-
-      // callback error with these two functions
-      // await AsyncStorage.setItem("userId", userInfo.id);
-      // await AsyncStorage.setItem("userName", userInfo.name);
-
       // erase information
       this.nameChange("");
-      alert(userInfo.id);
+
       return this.props.navigation.navigate("HomeTab");
     } catch (err) {
       console.log(err);

@@ -4,6 +4,7 @@ export default class UserInfo {
   @observable id = "";
   @observable name = "";
   @observable password = "";
+  @observable token = null;
   @observable notification = {
     origin: "current nothing",
     data: { target: "no data" },
@@ -24,6 +25,10 @@ export default class UserInfo {
 
   @action setPassword(password) {
     this.password = password;
+  }
+
+  @action setToken(token) {
+    this.token = token;
   }
 
   @action setNotification(notification) {
