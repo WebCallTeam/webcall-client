@@ -20,7 +20,7 @@ export default class HomeTab extends Component {
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, flexDirection: "column" }}>
         <NavigationEvents onWillBlur={() => this.setState({ QRState: 0 })} />
         {this.state.QRState === 1 ? (
           <View style={{ flex: 1 }}>
@@ -41,7 +41,7 @@ export default class HomeTab extends Component {
               height: hp("5%")
             }}
           >
-            <View style={{ height: 30, flexDirection: "row" }} />
+            <View style={{ height: 30 }} />
             <TouchableOpacity
               style={{
                 backgroundColor: "#46c3ad",

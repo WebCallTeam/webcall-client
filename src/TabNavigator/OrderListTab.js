@@ -38,30 +38,52 @@ class OrderListTab extends Component {
   };
 
   render() {
+    return (
+      <View style={styles.container}>
+        <Text
+          style={{
+            alignContent: "center",
+            alignSelf: "center",
+            fontSize: 30
+          }}
+        >
+          {userInfo.name}님의 주문
+        </Text>
+        {console.log(userInfo.name)}
+      </View>
+    );
+
+    /* 
     //let dataList = this.getOrderData();
     return (
       <View style={styles.container}>
-        <View style={{ height: 30 }} />
         <ScrollView nestedscrollEnabled={true}>
-          {/* {userInfo.notification &&
-        userInfo.notification.data.target != "no data" ? (
-          <OrderBox />
-        ) : (
-          <Text>현재 주문이 없습니다</Text>
-        )} */}
+          {!userInfo.orderList.length && (
+            <Text
+              style={{
+                alignContent: "center",
+                alignSelf: "center",
+                fontSize: 30
+              }}
+            >
+              현재 주문이 없습니다
+            </Text>
+          )}
+          {console.log(!userInfo.orderList.length)}
           {userInfo.orderList.map((value, index) => {
-            return <OrderBox value={value} key={index} />;
+            <OrderBox value={value} key={index} />;
           })}
-          <View style={{ height: 30 }} />
         </ScrollView>
       </View>
-    );
+    );*/
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    marginBottom: 30,
+    marginTop: 30
   }
 });
 
