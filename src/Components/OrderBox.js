@@ -4,7 +4,8 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  AsyncStorage
+  AsyncStorage,
+  Platform
 } from "react-native";
 import { inject, observer } from "mobx-react";
 import { userInfo, orderInfo } from "../store";
@@ -60,25 +61,10 @@ class OrderBox extends Component {
     await AsyncStorage.setItem("orderData", JSON.stringify(userInfo.orderList));
   };
   handleOrderData = async () => {
-    // alert(userInfo.orderList[this.props.arrayIndex].data.number);
-    //this.setState({ orderData: this.state.tmpOrder });
-    // this.setState({ dialogVisible: false });
-    //const { userInfo } = this.props;
-
-    //testing datas
-    // let rawData = await AsyncStorage.getItem("orderData");
-    // let rawData2 = await userInfo.notification;
-    // let rawData3 = await userInfo.orderList;
-    // let orderData = JSON.parse(rawData);
-    //alert(this.props.arrayIndex);
-    //alert(Object.values(rawData2.data));
-    //alert(rawData3.length);
-
-    alert(userInfo.id);
     try {
       // token data from mobx
       // https://reactjs.org/docs/lists-and-keys.html why use arrayKey instead of key
-      //let token = await userInfo.orderList[this.props.arrayKey].data.token;
+      let token = await userInfo.orderList[this.props.arrayIndex].data.token;
 
       let response = await fetch(MANAGER_TO_CALLCUSTOMER, {
         method: "POST",
@@ -94,10 +80,12 @@ class OrderBox extends Component {
     } catch (err) {
       console.log(err);
     }
+    this.setState({ dialogVisible: false });
   };
 
   handleDialog(data, index) {
     // this.setState({ tmpOrder: data });
+    data.nativeEvent.text = data.nativeEvent.text.replace(/[^0-9]/g, "");
     userInfo.setOrderNumber(data.nativeEvent.text, index);
   }
 
@@ -148,10 +136,20 @@ class OrderBox extends Component {
         >
           <Dialog.Title>주문 번호 할당</Dialog.Title>
           <Dialog.Description>해당주문의 번호를 입력하세요</Dialog.Description>
-          <Dialog.Input
-            value={userInfo.orderList[this.props.arrayIndex].data.number}
-            onChange={data => this.handleDialog(data, this.props.arrayIndex)}
-          ></Dialog.Input>
+          {Platform.OS === "ios" ? (
+            <Dialog.Input
+              value={userInfo.orderList[this.props.arrayIndex].data.number}
+              onChange={data => this.handleDialog(data, this.props.arrayIndex)}
+              keyboardType={"numeric"}
+              color="black"
+            />
+          ) : (
+            <Dialog.Input
+              value={userInfo.orderList[this.props.arrayIndex].data.number}
+              onChange={data => this.handleDialog(data, this.props.arrayIndex)}
+              keyboardType={"numeric"}
+            />
+          )}
           <Dialog.Button label="취소" onPress={this.onCancel} />
           <Dialog.Button label="할당" onPress={() => this.handleOrderData()} />
         </Dialog.Container>

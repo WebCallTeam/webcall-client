@@ -1,13 +1,15 @@
 import { createSwitchNavigator, createAppContainer } from "react-navigation";
-import { createStackNavigator } from "react-navigation-stack";
 import { createMaterialTopTabNavigator } from "react-navigation-tabs";
 import React, { Component } from "react";
 import LoginCheck from "./src/Components/LoginCheck";
-import { LoginScreen, MainScreen } from "./src/Screen";
+import { LoginScreen } from "./src/Screen";
 import { HomeTab, OrderListTab, ProfileTab } from "./src/TabNavigator";
 import { Provider } from "mobx-react";
 import { userInfo, orderInfo } from "./src/store";
 import * as Permissions from "expo-permissions";
+
+import { enableScreens } from "react-native-screens";
+enableScreens();
 
 const AppContainer = createAppContainer(
   createSwitchNavigator(
@@ -20,8 +22,8 @@ const AppContainer = createAppContainer(
           ProfileTab: { screen: ProfileTab }
         },
         {
-          //userInfo.check? initialRouteName: "HomeTab":initialRouteName: "OrderListTab",
           animationEnabled: true,
+          lazy: true,
           swipeEnabled: true,
           tabBarPosition: "bottom",
           tabBarOptions: {
@@ -62,7 +64,7 @@ async function getNotificationAsync() {
   // }
 }
 
-class App extends Component {
+export default class App extends Component {
   componentDidMount() {
     getNotificationAsync();
   }
@@ -75,5 +77,3 @@ class App extends Component {
     );
   }
 }
-
-export default App;

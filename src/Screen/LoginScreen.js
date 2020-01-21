@@ -23,8 +23,6 @@ import { inject, observer } from "mobx-react";
 import { userInfo } from "../store";
 import { Icon } from "native-base";
 
-const Axios = require("axios");
-
 const CUSTOMER_ENDPOINT =
   "https://webcall-dbserver.herokuapp.com/callcustomer/";
 const MANAGER_ENDPOINT = "https://webcall-dbserver.herokuapp.com/owner/";

@@ -1,9 +1,12 @@
 import React, { Component } from "react";
-import { Text, View, StyleSheet, Button, AsyncStorage } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { Icon } from "native-base";
-
-import { BarCodeScanner } from "expo-barcode-scanner";
-import * as Permissions from "expo-permissions";
+import { QRScan, QRMake } from "../Components/";
+import { NavigationEvents } from "react-navigation";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp
+} from "react-native-responsive-screen";
 
 export default class HomeTab extends Component {
   static navigationOptions = {
@@ -11,109 +14,62 @@ export default class HomeTab extends Component {
       <Icon name="ios-home" style={{ color: tintColor }} />
     )
   };
-
   state = {
-    hasCameraPermission: null,
-    scanned: false
-  };
-
-  async componentDidMount() {
-    this.getPermissionsAsync();
-  }
-
-  getPermissionsAsync = async () => {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA);
-    this.setState({ hasCameraPermission: status === "granted" });
+    QRState: 0
   };
 
   render() {
-    const { hasCameraPermission, scanned } = this.state;
-
-    if (hasCameraPermission === null) {
-      return <Text>Requesting for camera permission</Text>;
-    }
-    if (hasCameraPermission === false) {
-      return <Text>No access to camera</Text>;
-    }
     return (
-      <View
-        style={{
-          flex: 1,
-          flexDirection: "column",
-          justifyContent: "flex-end"
-        }}
-      >
-        <View style={{ height: 30 }} />
-        <BarCodeScanner
-          onBarCodeScanned={scanned ? undefined : this.handleBarCodeScanned}
-          style={{ flex: 1 }}
-        />
-
-        {scanned && (
-          <Button
-            title={"재시도"}
-            onPress={() => this.setState({ scanned: false })}
-          />
+      <View style={{ flex: 1, flexDirection: "column" }}>
+        <NavigationEvents onWillBlur={() => this.setState({ QRState: 0 })} />
+        {this.state.QRState === 1 ? (
+          <View style={{ flex: 1 }}>
+            <View style={{ height: 30 }} />
+            <QRScan />
+            <View style={{ height: 30 }} />
+          </View>
+        ) : this.state.QRState === 2 ? (
+          <View style={{ flex: 1 }}>
+            <View style={{ height: 30 }} />
+            <QRMake />
+            <View style={{ height: 30 }} />
+          </View>
+        ) : (
+          <View
+            style={{
+              width: "100%",
+              height: hp("5%")
+            }}
+          >
+            <View style={{ height: 30 }} />
+            <TouchableOpacity
+              style={{
+                backgroundColor: "#46c3ad",
+                width: "100%",
+                height: "100%",
+                justifyContent: "center",
+                alignItems: "center"
+              }}
+              onPress={() => this.setState({ QRState: 1 })}
+            >
+              <Text style={{ color: "white" }}>QR코드인식</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                backgroundColor: "#46c3ad",
+                width: "100%",
+                height: "100%",
+                justifyContent: "center",
+                alignItems: "center"
+              }}
+              onPress={() => this.setState({ QRState: 2 })}
+            >
+              <Text style={{ color: "white" }}>QR코드생성</Text>
+            </TouchableOpacity>
+            <View style={{ height: 30 }} />
+          </View>
         )}
-        <View style={{ height: 30 }} />
       </View>
     );
   }
-
-  // send order information to owner
-  handleBarCodeScanned = async ({ type, data }) => {
-    this.setState({ scanned: true });
-
-    let userName = AsyncStorage.getItem("userName");
-    let token = AsyncStorage.getItem("userToken");
-
-    try {
-      let response = await fetch(data, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          name: userName,
-          expo_token: token
-        })
-      });
-
-      return this.props.navigation.navigate("HomeTab");
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  sendNewOrder = async endpoint => {
-    let userName = AsyncStorage.getItem("userName");
-    let userToken = AsyncStorage.getItem("userToken");
-
-    try {
-      let response = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          name: userName,
-          expo_token: userToken
-        })
-      });
-
-      let responseJson = await response.json();
-
-      this.nameChange("");
-
-      // set it for owner id
-      // AsyncStorage.setItem("userID", responseJson.id);
-      // this.setState({ id: responseJson.id });
-
-      return this.props.navigation.navigate("Loading");
-    } catch (err) {
-      console.log(err);
-    }
-  };
 }
