@@ -4,7 +4,10 @@ import QRCode from "react-native-qrcode-svg";
 import * as Sharing from "expo-sharing";
 import * as FileSystem from "expo-file-system";
 
-export default class QRMake extends Component {
+import { inject, observer } from "mobx-react";
+import { userInfo, orderInfo } from "../store";
+
+class QRMake extends Component {
   shareQR = () => {
     this.svg.toDataURL(data => {
       FileSystem.writeAsStringAsync(
@@ -12,7 +15,6 @@ export default class QRMake extends Component {
         data,
         { encoding: FileSystem.EncodingType.Base64 }
       ).then(success => {
-        console.log(FileSystem.cacheDirectory + "/QRCode.png");
         Sharing.shareAsync(FileSystem.cacheDirectory + "/QRCode.png");
       });
     });
@@ -24,7 +26,7 @@ export default class QRMake extends Component {
       >
         <TouchableOpacity onPress={this.shareQR}>
           <QRCode
-            value={"ID"}
+            value={"테스트"}
             size={250}
             bgColor="#000"
             fgColor="#fff"
@@ -36,3 +38,5 @@ export default class QRMake extends Component {
     );
   }
 }
+
+export default inject("userInfo", "orderInfo")(observer(QRMake));

@@ -8,7 +8,7 @@ import {
   ScrollView
 } from "react-native";
 import { Icon } from "native-base";
-import OrderBox from "../Components/OrderBox";
+import { OrderBox, OrderCard } from "../Components";
 import { inject, observer } from "mobx-react";
 import { userInfo } from "../store";
 
@@ -49,35 +49,46 @@ class OrderListTab extends Component {
 
   render() {
     //let dataList = this.getOrderData();
-    return (
-      <ScrollView>
+    console.log(userInfo.token);
+    if (userInfo.isAdmin) {
+      return (
+        <ScrollView>
+          <View style={styles.container}>
+            {!userInfo.orderList.length && (
+              <Text style={styles.emptyOrder}>현재 주문이 없습니다</Text>
+            )}
+            {userInfo.orderList.map((value, index) => {
+              return this.state.status != 3 ? (
+                <OrderBox
+                  arrayIndex={index}
+                  key={index}
+                  unMount={this.removeOrderBox}
+                />
+              ) : null;
+            })}
+          </View>
+        </ScrollView>
+      );
+    } else {
+      return (
         <View style={styles.container}>
-          <View style={{ height: 30 }} />
-          {/* {userInfo.notification &&
-        userInfo.notification.data.target != "no data" ? (
-          <OrderBox />
-        ) : (
-          <Text>현재 주문이 없습니다</Text>
-        )} */}
-          {userInfo.orderList.map((value, index) => {
-            return this.state.status != 3 ? (
-              <OrderBox
-                arrayIndex={index}
-                key={index}
-                unMount={this.removeOrderBox}
-              />
-            ) : null;
-          })}
-          <View style={{ height: 30 }} />
+          <OrderCard />
         </View>
-      </ScrollView>
-    );
+      );
+    }
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    marginBottom: 30,
+    marginTop: 30
+  },
+  emptyOrder: {
+    alignContent: "center",
+    alignSelf: "center",
+    fontSize: 30
   }
 });
 
