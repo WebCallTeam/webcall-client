@@ -11,6 +11,7 @@ import {
   heightPercentageToDP as hp
 } from "react-native-responsive-screen";
 import { Icon } from "native-base";
+import { SwitchActions } from "react-navigation";
 
 export default class ProfileTab extends Component {
   static navigationOptions = {
@@ -27,13 +28,11 @@ export default class ProfileTab extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <View style={{ height: 30 }} />
         <View style={styles.buttonArea}>
           <TouchableOpacity style={styles.button} onPress={this.clearToken}>
             <Text style={styles.buttonTitle}>Logout</Text>
           </TouchableOpacity>
         </View>
-        <View style={{ height: 30 }} />
       </View>
     );
   }
@@ -45,7 +44,9 @@ const styles = StyleSheet.create({
     paddingLeft: wp("10%"),
     paddingRight: wp("10%"),
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    marginTop: 30,
+    marginBottom: 30
   },
   buttonArea: {
     width: "100%",

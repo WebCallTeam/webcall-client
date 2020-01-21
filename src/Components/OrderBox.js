@@ -111,11 +111,12 @@ class OrderBox extends Component {
             {userInfo.orderList[this.props.arrayIndex].data.name + "님의 주문"}
           </Text>
           <Text style={styles.name}>
-            {userInfo.orderList[this.props.arrayIndex]
-              ? userInfo.orderList[this.props.arrayIndex].data.number +
-                " 번 주문"
-              : "주문 번호를 지정해주세요"}
+            {!userInfo.orderList[this.props.arrayIndex].data.number
+              ? "주문 번호를 지정해주세요"
+              : userInfo.orderList[this.props.arrayIndex].data.number +
+                " 번 주문"}
           </Text>
+          {console.log(!userInfo.orderList[this.props.arrayIndex].data.number)}
         </View>
         <View style={styles.userComment}>
           {userInfo.orderList[this.props.arrayIndex].data.number ? (

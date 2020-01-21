@@ -33,6 +33,10 @@ class LoginCheck extends React.Component {
     let nameInfo = await AsyncStorage.getItem("userName");
     let tokenInfo = await AsyncStorage.getItem("userToken");
 
+    let adminInfo = await AsyncStorage.getItem("userAdmin");
+
+    adminInfo == "true" ? userInfo.setAdmin(true) : userInfo.setAdmin(false);
+
     userInfo.setName(nameInfo);
     userInfo.setId(idInfo);
     userInfo.setToken(tokenInfo);

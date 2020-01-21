@@ -79,7 +79,7 @@ class QRScan extends Component {
           name: userInfo.name,
           expo_token: userInfo.token
         })
-      });
+      }).then(alert("주문을 등록하셨습니다."));
 
       //확인 로직
       // let responseJson = await response.json();

@@ -18,7 +18,6 @@ class QRMake extends Component {
         data,
         { encoding: FileSystem.EncodingType.Base64 }
       ).then(success => {
-        console.log(FileSystem.cacheDirectory + "/QRCode.png");
         Sharing.shareAsync(FileSystem.cacheDirectory + "/QRCode.png");
       });
     });
