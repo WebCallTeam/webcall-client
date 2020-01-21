@@ -1,11 +1,17 @@
 import React, { Component } from "react";
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, AsyncStorage } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import * as Sharing from "expo-sharing";
 import * as FileSystem from "expo-file-system";
+import { inject, observer } from "mobx-react";
+import { userInfo } from "../store";
 
-export default class QRMake extends Component {
+class QRMake extends Component {
+  constructor(props) {
+    super(props);
+  }
   shareQR = () => {
+    this.getId();
     this.svg.toDataURL(data => {
       FileSystem.writeAsStringAsync(
         FileSystem.cacheDirectory + "/QRCode.png",
@@ -17,6 +23,13 @@ export default class QRMake extends Component {
       });
     });
   };
+
+  getId = async () => {
+    if (!userInfo.id) {
+      let idValue = await AsyncStorage.getItem("userId");
+      userInfo.setId(idValue);
+    }
+  };
   render() {
     return (
       <View
@@ -24,7 +37,7 @@ export default class QRMake extends Component {
       >
         <TouchableOpacity onPress={this.shareQR}>
           <QRCode
-            value={"ID"}
+            value={userInfo.id}
             size={250}
             bgColor="#000"
             fgColor="#fff"
@@ -36,3 +49,5 @@ export default class QRMake extends Component {
     );
   }
 }
+
+export default inject("userInfo")(observer(QRMake));
