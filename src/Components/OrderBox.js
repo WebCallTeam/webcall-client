@@ -11,7 +11,9 @@ import { inject, observer } from "mobx-react";
 import { userInfo, orderInfo } from "../store";
 import Dialog from "react-native-dialog";
 
-const PUSH_ENDPOINT = "https://webcall-dbserver.herokuapp.com/owner/";
+const PUSH_ENDPOINT = "https://webcall-dbserver.herokuapp.com/owner/1";
+const MANAGER_TO_CALLCUSTOMER =
+  "https://webcall-dbserver.herokuapp.com/callcustomer/";
 
 class OrderBox extends Component {
   constructor(props) {
@@ -25,7 +27,7 @@ class OrderBox extends Component {
     orderData: "",
     name: this.props.userInfo.notification.data.name,
     dialogVisible: false,
-    deleted: false
+    token: ""
   };
 
   // 주문 완료 버튼
@@ -54,19 +56,37 @@ class OrderBox extends Component {
     }
   };
 
-  deleteList = () => {
-    this.setState({ deleted: true });
+  deleteList = async () => {
+    userInfo.orderList.splice(this.props.arrayIndex, 1);
+    await AsyncStorage.setItem("orderData", JSON.stringify(userInfo.orderList));
   };
+  handleOrderData = async () => {
+    try {
+      // token data from mobx
+      // https://reactjs.org/docs/lists-and-keys.html why use arrayKey instead of key
+      let token = await userInfo.orderList[this.props.arrayIndex].data.token;
 
-  handleOrderData = () => {
-    this.setState({ orderData: this.state.tmpOrder });
+      let response = await fetch(MANAGER_TO_CALLCUSTOMER, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          number: userInfo.orderList[this.props.arrayIndex].data.number,
+          expo_token: token
+        })
+      });
+    } catch (err) {
+      console.log(err);
+    }
     this.setState({ dialogVisible: false });
   };
 
-  handelDialog(data) {
-    this.setState({
-      tmpOrder: data.nativeEvent.text.replace(/[^0-9]/g, "")
-    });
+  handleDialog(data, index) {
+    // this.setState({ tmpOrder: data });
+    data.nativeEvent.text = data.nativeEvent.text.replace(/[^0-9]/g, "");
+    userInfo.setOrderNumber(data.nativeEvent.text, index);
   }
 
   openDialog = () => {
@@ -79,67 +99,62 @@ class OrderBox extends Component {
   };
 
   render() {
-    if (!this.state.deleted) {
-      return (
-        <View style={styles.elem}>
-          <View style={styles.userInf}>
-            <Text style={styles.name}>{this.state.name + "님의 주문"}</Text>
-            <Text style={styles.name}>
-              {this.state.orderData
-                ? this.state.orderData + " 번 주문"
-                : "주문 번호를 지정해주세요"}
-            </Text>
-          </View>
-          <View style={styles.userComment}>
-            {this.state.orderData ? (
-              <TouchableOpacity
-                style={styles.button}
-                onPress={this.callCustomerWhenDone}
-              >
-                <Text>호출</Text>
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity style={styles.button} onPress={this.openDialog}>
-                <Text>확인</Text>
-              </TouchableOpacity>
-            )}
-            <TouchableOpacity style={styles.button} onPress={this.deleteList}>
-              <Text>제거</Text>
-            </TouchableOpacity>
-          </View>
-
-          <Dialog.Container
-            visible={this.state.dialogVisible}
-            onBackdropPress={this.onCancel}
-          >
-            <Dialog.Title>주문 번호 할당</Dialog.Title>
-            <Dialog.Description>
-              해당주문의 번호를 입력하세요
-            </Dialog.Description>
-            {Platform.OS === "ios" ? (
-              <Dialog.Input
-                value={this.state.tmpOrder}
-                onChange={tmpOrder => this.handelDialog(tmpOrder)}
-                keyboardType={"numeric"}
-                color="black"
-              />
-            ) : (
-              <Dialog.Input
-                value={this.state.tmpOrder}
-                onChange={tmpOrder => this.handelDialog(tmpOrder)}
-                keyboardType={"numeric"}
-              />
-            )}
-            <Dialog.Button label="취소" onPress={this.onCancel} />
-            <Dialog.Button
-              label="할당"
-              onPress={() => this.handleOrderData()}
-            />
-          </Dialog.Container>
+    return (
+      <View style={styles.elem}>
+        <View style={styles.userInf}>
+          <Text style={styles.name}>
+            {userInfo.orderList[this.props.arrayIndex].data.name + "님의 주문"}
+          </Text>
+          <Text style={styles.name}>
+            {userInfo.orderList[this.props.arrayIndex]
+              ? userInfo.orderList[this.props.arrayIndex].data.number +
+                " 번 주문"
+              : "주문 번호를 지정해주세요"}
+          </Text>
         </View>
-      );
-    }
-    return null;
+        <View style={styles.userComment}>
+          {this.state.orderData ? (
+            <TouchableOpacity
+              style={styles.button}
+              onPress={this.callCustomerWhenDone}
+            >
+              <Text>호출</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity style={styles.button} onPress={this.openDialog}>
+              <Text>확인</Text>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity style={styles.button} onPress={this.deleteList}>
+            <Text>제거</Text>
+          </TouchableOpacity>
+        </View>
+
+        <Dialog.Container
+          visible={this.state.dialogVisible}
+          onBackdropPress={this.onCancel}
+        >
+          <Dialog.Title>주문 번호 할당</Dialog.Title>
+          <Dialog.Description>해당주문의 번호를 입력하세요</Dialog.Description>
+          {Platform.OS === "ios" ? (
+            <Dialog.Input
+              value={userInfo.orderList[this.props.arrayIndex].data.number}
+              onChange={data => this.handleDialog(data, this.props.arrayIndex)}
+              keyboardType={"numeric"}
+              color="black"
+            />
+          ) : (
+            <Dialog.Input
+              value={userInfo.orderList[this.props.arrayIndex].data.number}
+              onChange={data => this.handleDialog(data, this.props.arrayIndex)}
+              keyboardType={"numeric"}
+            />
+          )}
+          <Dialog.Button label="취소" onPress={this.onCancel} />
+          <Dialog.Button label="할당" onPress={() => this.handleOrderData()} />
+        </Dialog.Container>
+      </View>
+    );
   }
 }
 

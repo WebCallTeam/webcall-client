@@ -8,7 +8,7 @@ import {
   ScrollView
 } from "react-native";
 import { Icon } from "native-base";
-import OrderBox from "../Components/";
+import OrderBox from "../Components/OrderBox";
 import { inject, observer } from "mobx-react";
 import { userInfo } from "../store";
 
@@ -17,6 +17,10 @@ class OrderListTab extends Component {
     super(props);
     this.dataList = [];
     // this.state = { datas: datas }
+    this.removeOrderBox = this.removeOrderBox.bind(this);
+
+    // 초기화 시 데이터 가져오기
+    this.getOrderData();
   }
 
   static navigationOptions = {
@@ -26,64 +30,54 @@ class OrderListTab extends Component {
   };
 
   // AsyncStorage를 이용한 데이터 가져오기
-  getOrderData = () => {
-    const orderData = AsyncStorage.getItem("orderData");
+  getOrderData = async () => {
+    let rawData = await AsyncStorage.getItem("orderData");
+    const { userInfo } = this.props;
 
-    let orderDataList = JSON.parse(orderData);
-    if (!orderDataList) {
-      orderDataList = [];
-    }
+    let orderData = JSON.parse(rawData);
 
-    return orderDataList;
+    userInfo.setOrderList(orderData);
+  };
+
+  state = {
+    status: [1, 2, 3]
+  };
+
+  removeOrderBox = () => {
+    this.setState((status = 3));
   };
 
   render() {
-    return (
-      <View style={styles.container}>
-        <Text
-          style={{
-            alignContent: "center",
-            alignSelf: "center",
-            fontSize: 30
-          }}
-        >
-          {userInfo.name}님의 주문
-        </Text>
-        {console.log(userInfo.name)}
-      </View>
-    );
-
-    /* 
     //let dataList = this.getOrderData();
     return (
-      <View style={styles.container}>
-        <ScrollView nestedscrollEnabled={true}>
-          {!userInfo.orderList.length && (
-            <Text
-              style={{
-                alignContent: "center",
-                alignSelf: "center",
-                fontSize: 30
-              }}
-            >
-              현재 주문이 없습니다
-            </Text>
-          )}
-          {console.log(!userInfo.orderList.length)}
+      <ScrollView>
+        <View style={styles.container}>
+          <View style={{ height: 30 }} />
+          {/* {userInfo.notification &&
+        userInfo.notification.data.target != "no data" ? (
+          <OrderBox />
+        ) : (
+          <Text>현재 주문이 없습니다</Text>
+        )} */}
           {userInfo.orderList.map((value, index) => {
-            <OrderBox value={value} key={index} />;
+            return this.state.status != 3 ? (
+              <OrderBox
+                arrayIndex={index}
+                key={index}
+                unMount={this.removeOrderBox}
+              />
+            ) : null;
           })}
-        </ScrollView>
-      </View>
-    );*/
+          <View style={{ height: 30 }} />
+        </View>
+      </ScrollView>
+    );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    marginBottom: 30,
-    marginTop: 30
+    flex: 1
   }
 });
 

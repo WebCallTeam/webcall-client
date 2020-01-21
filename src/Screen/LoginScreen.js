@@ -23,7 +23,9 @@ import { inject, observer } from "mobx-react";
 import { userInfo } from "../store";
 import { Icon } from "native-base";
 
-const PUSH_ENDPOINT = "https://webcall-dbserver.herokuapp.com/callcustomer/";
+const CUSTOMER_ENDPOINT =
+  "https://webcall-dbserver.herokuapp.com/callcustomer/";
+const MANAGER_ENDPOINT = "https://webcall-dbserver.herokuapp.com/owner/";
 
 class LoginScreen extends Component {
   static navigationOptions = {
@@ -34,21 +36,29 @@ class LoginScreen extends Component {
     super(props);
 
     this.nameChange = this.nameChange.bind(this);
+    this.initialize();
   }
 
   state = {
     notification: null,
     name: "",
     messageText: "",
-    check: false
+    check: false,
+    id: ""
   };
   static navigationOptions = {
     title: "WEBCALL",
     headerTitleStyle: { alignSelf: "center", textAlign: "center", flex: 1 }
   };
 
+  initialize = async () => {
+    const { userInfo } = this.props;
+    userInfo.token = await AsyncStorage.getItem("userToken");
+  };
+
   registerForPushNotificationsAsync = async () => {
-    setTimeout(() => {}, 1000);
+    setTimeout(() => {}, 2000);
+    const { userInfo } = await this.props;
     const { status: existingStatus } = await Permissions.getAsync(
       Permissions.NOTIFICATIONS
     );
@@ -68,32 +78,56 @@ class LoginScreen extends Component {
       return;
     }
 
-    // Get the token that uniquely identifies this device
-    let token = await Notifications.getExpoPushTokenAsync();
-    // testing local
-    //let token = "this is a local token";
-    AsyncStorage.setItem("userToken", token);
+    let requestMethod = "";
+    //let tokenValue = "ExponentPushToken[EF0j3iAyND7CcI7ujOqveo]";
 
-    const { userInfo } = await this.props;
+    let PUSH_ENDPOINT = userInfo.isAdmin ? MANAGER_ENDPOINT : CUSTOMER_ENDPOINT;
+
+    // owner update X
+    if (userInfo.token === null) {
+      // Get the token that uniquely identifies this device
+      let token = await Notifications.getExpoPushTokenAsync();
+
+      await AsyncStorage.setItem("userToken", token);
+      userInfo.setToken(token);
+
+      requestMethod = "POST";
+    } else {
+      requestMethod = "PUT";
+    }
+    // check if customer or manager
+
+    //let PUSH_ENDPOINT = CUSTOMER_ENDPOINT;
+    // set it for owner id
+    await AsyncStorage.setItem("userName", userInfo.name);
 
     try {
-      let response = await fetch(PUSH_ENDPOINT, {
-        method: "POST",
+      // need to look into axios break point
+      let responseData = await fetch(PUSH_ENDPOINT, {
+        method: requestMethod,
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
           name: userInfo.name,
-          expo_token: token
+          expo_token: userInfo.token
         })
-      });
-
-      let responseJson = await response.json();
-
-      //console.log(responseJson);
+      })
+        .then(res => res.json())
+        .then(responseJson => {
+          if (requestMethod == "POST") {
+            userInfo.setId(responseJson.id);
+            let idString = JSON.stringify(responseJson.id);
+            idString = idString.replace("[", "").replace("]", "");
+            AsyncStorage.setItem("userId", idString);
+          }
+        })
+        .catch(err => alert(err));
+      // erase information
       this.nameChange("");
-      return this.props.navigation.navigate("Loading");
+
+      return this.props.navigation.navigate("HomeTab");
     } catch (err) {
       console.log(err);
     }
@@ -114,10 +148,19 @@ class LoginScreen extends Component {
     this.setState({ notification });
   };
 
+  toggleAdmin = () => {
+    let { userInfo } = this.props;
+
+    userInfo.toggleAdmin();
+  };
+
   render() {
     const { userInfo } = this.props;
     //const { name } = this.state;
+    // let unknownValue = Object.values(AsyncStorage.getItem("userToken"));
+    // let tokenValue = AsyncStorage.getItem("userToken");
 
+    // alert(unknownValue);
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <KeyboardAvoidingView style={styles.container} behavior="padding">
@@ -140,19 +183,16 @@ class LoginScreen extends Component {
             >
               {Platform.OS === "ios" ? (
                 <Switch
-                  value={this.state.check}
-                  onValueChange={() =>
-                    this.setState({ check: !this.state.check })
-                  }
+                  value={userInfo.isAdmin}
+                  onValueChange={this.toggleAdmin}
                 />
               ) : (
                 <CheckBox
-                  value={this.state.check}
-                  onValueChange={() =>
-                    this.setState({ check: !this.state.check })
-                  }
+                  value={userInfo.isAdmin}
+                  onValueChange={this.toggleAdmin}
                 />
               )}
+
               <Text>관리자 로그인</Text>
             </View>
           </View>
@@ -161,7 +201,7 @@ class LoginScreen extends Component {
               style={styles.button}
               onPress={this.registerForPushNotificationsAsync}
             >
-              <Text style={styles.buttonTitle}>login</Text>
+              <Text style={styles.buttonTitle}>Login</Text>
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>

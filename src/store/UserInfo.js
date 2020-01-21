@@ -1,8 +1,10 @@
 import { action, observable } from "mobx";
 
 export default class UserInfo {
+  @observable id = "";
   @observable name = "";
   @observable password = "";
+  @observable token = null;
   @observable notification = {
     origin: "current nothing",
     data: { target: "no data" },
@@ -11,7 +13,11 @@ export default class UserInfo {
 
   @observable orderList = [];
 
-  @observable testText = "가입";
+  @observable isAdmin = false;
+
+  @action setId(id) {
+    this.id = id;
+  }
 
   @action setName(name) {
     this.name = name;
@@ -21,8 +27,8 @@ export default class UserInfo {
     this.password = password;
   }
 
-  @action setText(Text) {
-    this.testText = Text;
+  @action setToken(token) {
+    this.token = token;
   }
 
   @action setNotification(notification) {
@@ -33,11 +39,19 @@ export default class UserInfo {
     this.orderList = Array.from(notificationArray);
   }
 
+  @action setOrderNumber(data, index) {
+    this.orderList[index].data.number = data;
+  }
+
   @action addNotification(notification) {
     this.orderList.push(notification);
   }
 
   @action deleteNotification(value) {
     this.orderList.splice(value, 1);
+  }
+
+  @action toggleAdmin() {
+    this.isAdmin = !this.isAdmin;
   }
 }
