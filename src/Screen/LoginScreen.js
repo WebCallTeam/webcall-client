@@ -57,7 +57,7 @@ class LoginScreen extends Component {
   };
 
   registerForPushNotificationsAsync = async () => {
-    setTimeout(() => {}, 5000);
+    setTimeout(() => {}, 2000);
     const { userInfo } = await this.props;
     const { status: existingStatus } = await Permissions.getAsync(
       Permissions.NOTIFICATIONS
