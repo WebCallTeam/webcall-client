@@ -1,12 +1,8 @@
 import React, { Component } from "react";
-import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { Text, View, StyleSheet } from "react-native";
 import { Icon } from "native-base";
 import { QRScan, QRMake } from "../Components/";
 import { NavigationEvents } from "react-navigation";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp
-} from "react-native-responsive-screen";
 import { userInfo } from "../store";
 
 export default class HomeTab extends Component {
