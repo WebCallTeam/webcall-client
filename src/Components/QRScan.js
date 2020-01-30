@@ -58,6 +58,7 @@ class QRScan extends Component {
 
     let { userInfo } = await this.props;
 
+    alert(data);
     if (!userInfo.name) {
       let nameValue = await AsyncStorage.getItem("userName");
       userInfo.setName(nameValue);

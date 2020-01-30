@@ -12,8 +12,14 @@ import {
 } from "react-native-responsive-screen";
 import { Icon } from "native-base";
 import { SwitchActions } from "react-navigation";
+import { inject, observer } from "mobx-react";
+import { userInfo } from "../store";
 
-export default class ProfileTab extends Component {
+const CUSTOMER_ENDPOINT =
+  "https://webcall-dbserver.herokuapp.com/callcustomer/";
+const MANAGER_ENDPOINT = "https://webcall-dbserver.herokuapp.com/owner/";
+
+class ProfileTab extends Component {
   static navigationOptions = {
     tabBarIcon: ({ tintColor }) => (
       <Icon name="ios-person" style={{ color: tintColor }} />
@@ -22,7 +28,28 @@ export default class ProfileTab extends Component {
 
   clearToken = () => {
     AsyncStorage.removeItem("userToken");
+    this.clearDatabase();
     setTimeout(() => this.props.navigation.navigate("Loading"), 1000);
+  };
+
+  clearDatabase = async () => {
+    let { userInfo } = this.props;
+    try {
+      let PUSH_ENDPOINT = "";
+      if (userInfo.isAdmin) {
+        PUSH_ENDPOINT = MANAGER_ENDPOINT;
+      } else {
+        PUSH_ENDPOINT = CUSTOMER_ENDPOINT;
+      }
+
+      await fetch(PUSH_ENDPOINT + userInfo.id, {
+        method: "DELETE"
+      });
+      AsyncStorage.removeItem("userId");
+      AsyncStorage.removeItem("isAdmin");
+    } catch {
+      err => alert(err);
+    }
   };
 
   render() {
@@ -63,3 +90,5 @@ const styles = StyleSheet.create({
     color: "white"
   }
 });
+
+export default inject("userInfo")(observer(ProfileTab));

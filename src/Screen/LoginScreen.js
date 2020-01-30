@@ -53,7 +53,10 @@ class LoginScreen extends Component {
 
   initialize = async () => {
     const { userInfo } = this.props;
-    userInfo.token = await AsyncStorage.getItem("userToken");
+    await AsyncStorage.removeItem("userId");
+    await AsyncStorage.removeItem("isAdmin");
+    await AsyncStorage.removeItem("userToken");
+    await AsyncStorage.removeItem("userName");
   };
 
   registerForPushNotificationsAsync = async () => {
@@ -82,7 +85,6 @@ class LoginScreen extends Component {
     //let tokenValue = "ExponentPushToken[EF0j3iAyND7CcI7ujOqveo]";
 
     let PUSH_ENDPOINT = userInfo.isAdmin ? MANAGER_ENDPOINT : CUSTOMER_ENDPOINT;
-    let tokenValue = userInfo.token;
 
     await AsyncStorage.setItem(
       "userAdmin",
@@ -93,26 +95,8 @@ class LoginScreen extends Component {
 
     await AsyncStorage.setItem("userToken", token);
     userInfo.setToken(token);
-
     requestMethod = "POST";
 
-    // owner update X
-    if (tokenValue === null) {
-      // Get the token that uniquely identifies this device
-      let token = await Notifications.getExpoPushTokenAsync();
-
-      await AsyncStorage.setItem("userToken", token);
-      userInfo.setToken(token);
-
-      requestMethod = "POST";
-    } else {
-      requestMethod = "PUT";
-    }
-    // check if customer or manager
-
-    //let PUSH_ENDPOINT = CUSTOMER_ENDPOINT;
-    // set it for owner id
-    await AsyncStorage.setItem("userName", userInfo.name);
     try {
       // need to look into axios break point
       let responseData = await fetch(PUSH_ENDPOINT, {
@@ -123,7 +107,7 @@ class LoginScreen extends Component {
         },
         body: JSON.stringify({
           name: userInfo.name,
-          expo_token: tokenValue
+          expo_token: userInfo.token
         })
       })
         .then(res => res.json())
@@ -132,15 +116,16 @@ class LoginScreen extends Component {
             userInfo.setId(responseJson.id);
             let idString = JSON.stringify(responseJson.id);
             idString = idString.replace("[", "").replace("]", "");
-            AsyncStorage.setItem("userId", idString);
+            //alert(idString);
           }
-        });
+        })
+        .catch(err => alert("ERROR MESSAGE: " + err));
       // PUT 기능을 현재 사용하지 않기 때문에 일단 보류
-      //.catch(err => alert(err));
       // erase information
-      this.nameChange("");
 
-      this.props.navigation.navigate("HomeTab");
+      // this.nameChange("");
+
+      return this.props.navigation.navigate("HomeTab");
     } catch (err) {
       console.log(err);
     }

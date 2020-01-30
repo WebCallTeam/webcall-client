@@ -22,9 +22,13 @@ class LoginCheck extends React.Component {
   }
 
   _bootstrapAsync = async () => {
-    const userToken = await AsyncStorage.getItem("userToken");
+    let userToken = await AsyncStorage.getItem("userToken");
+    let userId = await AsyncStorage.getItem("userId");
+    let isAdmin = await AsyncStorage.getItem("isAdmin");
 
-    this.props.navigation.navigate(userToken ? "App" : "Auth");
+    this.props.navigation.navigate(
+      userToken && userId && isAdmin ? "App" : "Auth"
+    );
     //this.props.navigation.navigate("Auth");
   };
 
@@ -33,7 +37,7 @@ class LoginCheck extends React.Component {
     let nameInfo = await AsyncStorage.getItem("userName");
     let tokenInfo = await AsyncStorage.getItem("userToken");
 
-    let adminInfo = await AsyncStorage.getItem("userAdmin");
+    let adminInfo = await AsyncStorage.getItem("isAdmin");
 
     adminInfo == "true" ? userInfo.setAdmin(true) : userInfo.setAdmin(false);
 

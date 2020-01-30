@@ -59,9 +59,10 @@ async function getNotificationAsync() {
   const { status, permissions } = await Permissions.askAsync(
     Permissions.NOTIFICATIONS
   );
-  // if (status !== "granted") {
-  //   throw new Error("Notification permission not granted");
-  // }
+
+  if (status !== "granted") {
+    throw new Error("Notification permission not granted");
+  }
 }
 
 export default class App extends Component {

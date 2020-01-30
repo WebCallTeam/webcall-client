@@ -9,6 +9,7 @@ import { userInfo } from "../store";
 class QRMake extends Component {
   constructor(props) {
     super(props);
+    this.id = "-100";
   }
   shareQR = () => {
     this.getId();
@@ -24,19 +25,29 @@ class QRMake extends Component {
   };
 
   getId = async () => {
+    let { userInfo } = this.props;
     if (!userInfo.id) {
       let idValue = await AsyncStorage.getItem("userId");
       userInfo.setId(idValue);
     }
   };
+
+  checkForId = async () => {
+    if (userInfo.id === null) {
+      userInfo.id = await AsyncStorage.getItem("userId");
+      alert(userInfo.id);
+    }
+  };
+
   render() {
+    const { userInfo } = this.props;
     return (
       <View
         style={{ flex: 1, margin: 10, alignItems: "center", paddingTop: 30 }}
       >
         <TouchableOpacity onPress={this.shareQR}>
           <QRCode
-            value={userInfo.id}
+            value={userInfo.id.toString()}
             size={250}
             bgColor="#000"
             fgColor="#fff"
