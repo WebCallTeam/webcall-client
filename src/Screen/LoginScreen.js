@@ -11,11 +11,11 @@ import {
   KeyboardAvoidingView,
   CheckBox,
   Switch,
-  Platform
+  Platform,
 } from "react-native";
 import {
   widthPercentageToDP as wp,
-  heightPercentageToDP as hp
+  heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { Notifications } from "expo";
 import * as Permissions from "expo-permissions";
@@ -29,7 +29,7 @@ const MANAGER_ENDPOINT = "https://webcall-dbserver.herokuapp.com/owner/";
 
 class LoginScreen extends Component {
   static navigationOptions = {
-    header: null
+    header: null,
   };
 
   constructor(props) {
@@ -44,11 +44,11 @@ class LoginScreen extends Component {
     name: "",
     messageText: "",
     check: false,
-    id: ""
+    id: "",
   };
   static navigationOptions = {
     title: "WEBCALL",
-    headerTitleStyle: { alignSelf: "center", textAlign: "center", flex: 1 }
+    headerTitleStyle: { alignSelf: "center", textAlign: "center", flex: 1 },
   };
 
   initialize = async () => {
@@ -119,15 +119,15 @@ class LoginScreen extends Component {
         method: requestMethod,
         headers: {
           Accept: "application/json",
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           name: userInfo.name,
-          expo_token: tokenValue
-        })
+          expo_token: tokenValue,
+        }),
       })
-        .then(res => res.json())
-        .then(responseJson => {
+        .then((res) => res.json())
+        .then((responseJson) => {
           if (requestMethod == "POST") {
             userInfo.setId(responseJson.id);
             let idString = JSON.stringify(responseJson.id);
@@ -152,12 +152,12 @@ class LoginScreen extends Component {
     //this.setState({ name: value });
   }
 
-  notificationChange = value => {
+  notificationChange = (value) => {
     const { userInfo } = this.props;
     userInfo.setNotification(value);
   };
 
-  handleNotification = notification => {
+  handleNotification = (notification) => {
     this.setState({ notification });
   };
 
@@ -187,11 +187,17 @@ class LoginScreen extends Component {
               onChangeText={this.nameChange}
               value={userInfo.name}
             />
+            <TextInput
+              style={styles.textForm}
+              placeholder={"PASSWORD"}
+              onChangeText={this.pswChange}
+              value={userInfo.psw}
+            />
             <View
               style={{
                 justifyContent: "flex-end",
                 alignItems: "center",
-                flexDirection: "row"
+                flexDirection: "row",
               }}
             >
               {Platform.OS === "ios" ? (
@@ -212,6 +218,12 @@ class LoginScreen extends Component {
           <View style={styles.buttonArea}>
             <TouchableOpacity
               style={styles.button}
+              onPress={() => this.props.navigation.navigate("Register")}
+            >
+              <Text style={styles.buttonTitle}>Register</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.button}
               onPress={this.registerForPushNotificationsAsync}
             >
               <Text style={styles.buttonTitle}>Login</Text>
@@ -229,19 +241,20 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     paddingLeft: wp("10%"),
     paddingRight: wp("10%"),
-    justifyContent: "space-around"
+    justifyContent: "space-around",
+    marginBottom: hp("5%"),
   },
   titleArea: {
     width: "100%",
     padding: wp("10%"),
-    alignItems: "center"
+    alignItems: "center",
   },
   title: {
-    fontSize: wp("10%")
+    fontSize: wp("10%"),
   },
   formArea: {
     width: "100%",
-    paddingBottom: wp("5%")
+    paddingBottom: wp("5%"),
   },
   textForm: {
     borderWidth: 0.5,
@@ -250,22 +263,23 @@ const styles = StyleSheet.create({
     height: hp("5%"),
     paddingLeft: 5,
     paddingRight: 5,
-    marginBottom: "5%"
+    marginBottom: "1%",
   },
   buttonArea: {
     width: "100%",
-    height: hp("5%")
+    height: hp("5%"),
   },
   button: {
     backgroundColor: "#46c3ad",
     width: "100%",
     height: "100%",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    marginBottom: 5,
   },
   buttonTitle: {
-    color: "white"
-  }
+    color: "white",
+  },
 });
 
 export default inject("userInfo")(observer(LoginScreen));

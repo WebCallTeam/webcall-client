@@ -1,8 +1,9 @@
 import { createSwitchNavigator, createAppContainer } from "react-navigation";
+import { createStackNavigator } from "react-navigation-stack";
 import { createMaterialTopTabNavigator } from "react-navigation-tabs";
 import React, { Component } from "react";
 import LoginCheck from "./src/Components/LoginCheck";
-import { LoginScreen } from "./src/Screen";
+import { LoginScreen, Register } from "./src/Screen";
 import { HomeTab, OrderListTab, ProfileTab } from "./src/TabNavigator";
 import { Provider } from "mobx-react";
 import { userInfo, orderInfo } from "./src/store";
@@ -19,7 +20,7 @@ const AppContainer = createAppContainer(
         {
           HomeTab: { screen: HomeTab },
           OrderListTab: { screen: OrderListTab },
-          ProfileTab: { screen: ProfileTab }
+          ProfileTab: { screen: ProfileTab },
         },
         {
           animationEnabled: true,
@@ -30,12 +31,12 @@ const AppContainer = createAppContainer(
             style: {
               ...Platform.select({
                 ios: {
-                  backgroundColor: "white"
+                  backgroundColor: "white",
                 },
                 android: {
-                  backgroundColor: "white"
-                }
-              })
+                  backgroundColor: "white",
+                },
+              }),
             },
             iconStyle: { height: 30 },
             activeTintColor: "#000",
@@ -43,14 +44,22 @@ const AppContainer = createAppContainer(
             upperCaseLabel: false,
             showLabel: false,
             showIcon: true,
-            indicatorStyle: { backgroundColor: "#ffffff" }
-          }
+            indicatorStyle: { backgroundColor: "#ffffff" },
+          },
         }
       ),
-      Auth: LoginScreen
+      Auth: createStackNavigator(
+        {
+          Register: { screen: Register },
+          Login: { screen: LoginScreen },
+        },
+        {
+          initialRouteName: "Login",
+        }
+      ),
     },
     {
-      initialRouteName: "Loading"
+      initialRouteName: "Loading",
     }
   )
 );
