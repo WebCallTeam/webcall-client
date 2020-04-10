@@ -1,14 +1,47 @@
 import React, { Component } from "react";
-import { Text, View, StyleSheet, Button } from "react-native";
+import { View, StyleSheet, Image } from "react-native";
+import { inject, observer } from "mobx-react";
 
-export default class Coupons extends Component {
+class Coupons extends Component {
+  makeCouponList() {
+    let couponCount = 4;
+    const couponList = [];
+    for (let i = 0; i < 10; i++) {
+      if (couponCount-- > 0)
+        couponList.push(
+          <Image
+            source={require("../../assets/O.png")}
+            style={{
+              width: "20%",
+              aspectRatio: 1,
+            }}
+          />
+        );
+      else
+        couponList.push(
+          <Image
+            source={require("../../assets/X.png")}
+            style={{
+              width: "20%",
+              aspectRatio: 1,
+            }}
+          />
+        );
+    }
+    return couponList;
+  }
   render() {
     return (
-      <View style={StyleSheet.container}>
-        <View style={StyleSheet.row}>
-          <Text>테스트</Text>
-          <Text>한번더</Text>
-        </View>
+      <View
+        style={{
+          flex: 1,
+          flexWrap: "wrap",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {this.makeCouponList}
       </View>
     );
   }
@@ -24,3 +57,5 @@ const styles = StyleSheet.create({
   },
   column: {},
 });
+
+export default inject("userInfo", "orderInfo")(observer(Coupons));

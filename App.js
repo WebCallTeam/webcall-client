@@ -3,14 +3,26 @@ import { createStackNavigator } from "react-navigation-stack";
 import { createMaterialTopTabNavigator } from "react-navigation-tabs";
 import React, { Component } from "react";
 import LoginCheck from "./src/Components/LoginCheck";
+import Coupons from "./src/Components/Coupons";
 import { LoginScreen, Register } from "./src/Screen";
 import { HomeTab, OrderListTab, ProfileTab } from "./src/TabNavigator";
 import { Provider } from "mobx-react";
 import { userInfo, orderInfo } from "./src/store";
 import * as Permissions from "expo-permissions";
+import { Icon } from "native-base";
 
 import { enableScreens } from "react-native-screens";
 enableScreens();
+
+const CouponStack = createStackNavigator(
+  {
+    ProfileTab,
+    Coupons,
+  },
+  {
+    initialRouteName: "ProfileTab",
+  }
+);
 
 const AppContainer = createAppContainer(
   createSwitchNavigator(
@@ -20,7 +32,14 @@ const AppContainer = createAppContainer(
         {
           HomeTab: { screen: HomeTab },
           OrderListTab: { screen: OrderListTab },
-          ProfileTab: { screen: ProfileTab },
+          ProfileTab: {
+            screen: CouponStack,
+            navigationOptions: {
+              tabBarIcon: ({ tintColor }) => (
+                <Icon name="ios-person" style={{ color: tintColor }} />
+              ),
+            },
+          },
         },
         {
           animationEnabled: true,

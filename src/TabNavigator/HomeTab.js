@@ -9,10 +9,10 @@ export default class HomeTab extends Component {
   static navigationOptions = {
     tabBarIcon: ({ tintColor }) => (
       <Icon name="ios-home" style={{ color: tintColor }} />
-    )
+    ),
   };
   state = {
-    QRState: false
+    QRState: false,
   };
 
   render() {
@@ -32,6 +32,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginBottom: 30,
-    marginTop: 30
-  }
+    marginTop: 30,
+  },
 });

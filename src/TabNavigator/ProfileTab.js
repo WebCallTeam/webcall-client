@@ -12,6 +12,7 @@ import {
 } from "react-native-responsive-screen";
 import { Icon } from "native-base";
 import { SwitchActions } from "react-navigation";
+import Coupons from "../Components";
 
 export default class ProfileTab extends Component {
   static navigationOptions = {
@@ -25,7 +26,9 @@ export default class ProfileTab extends Component {
     setTimeout(() => this.props.navigation.navigate("Loading"), 1000);
   };
 
-  ShowCoupons = () => {};
+  ShowCoupons = () => {
+    this.props.navigation.navigate("Coupons");
+  };
 
   render() {
     return (
