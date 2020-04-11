@@ -3,11 +3,14 @@ import { View, StyleSheet, Image } from "react-native";
 import { inject, observer } from "mobx-react";
 
 class Coupons extends Component {
+  state = {
+    couponCount: 4,
+  };
   makeCouponList() {
-    let couponCount = 4;
+    let couponCountTmp = this.state.couponCount;
     const couponList = [];
     for (let i = 0; i < 10; i++) {
-      if (couponCount-- > 0)
+      if (couponCountTmp-- > 0)
         couponList.push(
           <Image
             source={require("../../assets/O.png")}
@@ -41,7 +44,7 @@ class Coupons extends Component {
           justifyContent: "center",
         }}
       >
-        {this.makeCouponList}
+        {this.makeCouponList()}
       </View>
     );
   }
